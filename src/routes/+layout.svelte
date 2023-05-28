@@ -6,6 +6,11 @@
 	import Header from '$lib/components/Header.svelte';
 </script>
 
+<svelte:head>
+	<title>Openplayground Metrics</title>
+	<meta name="description" content="AI Model Metrics Site" />
+</svelte:head>
+
 <div class="app">
 	<Header />
 	<Content>
