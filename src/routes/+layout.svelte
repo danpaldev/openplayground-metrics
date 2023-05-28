@@ -1,8 +1,7 @@
 <script>
-	// import Header from './Header.svelte';
 	import 'carbon-components-svelte/css/all.css';
 	import './styles.css';
-	import { Content, Grid, Row, Column } from 'carbon-components-svelte';
+	import { Content } from 'carbon-components-svelte';
 	import Header from '$lib/components/Header.svelte';
 </script>
 

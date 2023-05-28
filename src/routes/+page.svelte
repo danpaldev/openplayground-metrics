@@ -1,10 +1,8 @@
 <script lang="ts">
-	import timestamps from '$lib/timestamps';
 	import '@carbon/charts/styles.css';
-	import { globalTheme } from '$lib/stores/settings';
 	import { Dropdown } from 'carbon-components-svelte';
-	import { LineChart } from '@carbon/charts-svelte';
-	import { tooltipValueFormatter } from '$lib/utils';
+	import LineChartComponent from '$lib/components/LineChartComponent.svelte';
+	import { ContentSwitcher, Switch } from 'carbon-components-svelte';
 	import {
 		ALL_MODELS_ID,
 		ALL_MODELS_TEXT,
@@ -15,17 +13,20 @@
 		RESPONSE_TIME_DUAL_ID,
 		RESPONSE_TIME_DUAL_TEXT,
 		TOKENS_PER_SECOND_ID,
-		TOKENS_PER_SECOND_TEXT
+		TOKENS_PER_SECOND_TEXT,
+		PROVIDERS
 	} from '$lib/constants';
 
 	let sortType = ALL_MODELS_ID;
 	let graphType = RESPONSE_TIME_ID;
+
+	let selectedIndex = 0;
+	$: selectedProvider = Object.keys(PROVIDERS)[selectedIndex];
 </script>
 
 <section>
 	<div class="options-container">
 		<Dropdown
-			id="meme"
 			size="lg"
 			titleText="Sort by"
 			bind:selectedId={sortType}
@@ -45,41 +46,19 @@
 				{ id: TOKENS_PER_SECOND_ID, text: TOKENS_PER_SECOND_TEXT }
 			]}
 		/>
+
+		{#if sortType === BY_PROVIDER_ID}
+			<div class="switch-container">
+				<ContentSwitcher bind:selectedIndex>
+					{#each Object.entries(PROVIDERS).map( ([key, value]) => ({ key, value }) ) as { key, value }}
+						<Switch text={value} />
+					{/each}
+				</ContentSwitcher>
+			</div>
+		{/if}
 	</div>
-	<LineChart
-		theme={$globalTheme}
-		data={timestamps.map((item, index) => ({
-			group: item.model,
-			date: item.timestamp,
-			value: item.duration
-		}))}
-		options={{
-			title: 'API response time tracker',
-			axes: {
-				bottom: {
-					title: 'Time (UTC)',
-					mapsTo: 'date',
-					scaleType: 'time'
-				},
-				left: {
-					mapsTo: 'value',
-					title: 'Response Time (s)',
-					scaleType: 'linear'
-				}
-			},
-			height: '500px',
-			// curve: 'curveNatural',
-			tooltip: {
-				valueFormatter: tooltipValueFormatter,
-				truncation: {
-					numCharacter: 18
-				}
-			},
-			toolbar: {
-				enabled: false
-			}
-		}}
-	/>
+	<LineChartComponent sortType />
+	<!-- <p>{selectedProvider}</p> -->
 </section>
 
 <style>
@@ -100,6 +79,14 @@
 		width: 100%;
 		margin-bottom: 2rem;
 		/* height: 100%; */
+		/* border: 1px solid red; */
+	}
+
+	.switch-container {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column-reverse;
 		/* border: 1px solid red; */
 	}
 </style>
