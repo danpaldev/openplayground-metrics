@@ -12,7 +12,69 @@ export const TOKENS_PER_SECOND_TEXT = 'Tokens/Second';
 
 //Providers constants
 export const PROVIDERS = {
-	OPEN_AI: 'openai',
-	ANTROPHIC: 'antrophic',
-	META: 'meta'
+	OPEN_AI_ID: 'open_ai',
+	ANTHROPIC_ID: 'anthropic',
+	OTHERS_ID: 'others',
+	OPEN_AI_TEXT: 'OpenAI',
+	ANTHROPIC_TEXT: 'Anthropic',
+	OTHERS_TEXT: 'Others'
+};
+
+export const PROVIDERS_INDEXES = new Map([
+	[0, PROVIDERS.OPEN_AI_ID],
+	[1, PROVIDERS.ANTHROPIC_ID],
+	[2, PROVIDERS.OTHERS_ID]
+]);
+
+export const second_try = new Map([
+	[
+		0,
+		{
+			provider_id: 'open_ai',
+			provider_name: 'OpenAI'
+		}
+	],
+	[
+		1,
+		{
+			provider_id: 'anthropic',
+			provider_name: 'Anthropic'
+		}
+	],
+	[
+		2,
+		{
+			provider_id: 'others',
+			provider_name: 'Others'
+		}
+	]
+]);
+
+export const MODELS_BY_PROVIDER = {
+	[PROVIDERS.OPEN_AI_ID]: [
+		'text-ada-001',
+		'text-babbage-001',
+		'text-curie-001',
+		'text-davinci-003',
+		'gpt-3.5-turbo',
+		'gpt-4',
+		'text-davinci-002'
+	],
+	[PROVIDERS.ANTHROPIC_ID]: [
+		'claude-instant-v1',
+		'claude-v1',
+		'claude-v1-100k',
+		'claude-instant-v1-100k'
+	],
+	[PROVIDERS.OTHERS_ID]: [
+		'luminous-supreme-control',
+		'luminous-base',
+		'luminous-supreme',
+		'luminous-extended',
+		'gpt-j-6b-vanilla',
+		'pythia-6.9b',
+		'pythia-12b',
+		'gpt-neox-20b-vanilla',
+		'pythia-20b'
+	]
 };

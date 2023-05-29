@@ -1,8 +1,16 @@
 <script lang="ts">
 	import '@carbon/charts/styles.css';
-	import { Dropdown } from 'carbon-components-svelte';
+	import { Dropdown, Button } from 'carbon-components-svelte';
+	//NEW
+	// import LinearChartComponent from '$lib/components/LinearChartComponent.svelte';
+	//OLD
 	import LineChartComponent from '$lib/components/LineChartComponent.svelte';
+	import ChartComponent from '$lib/components/ChartComponent.svelte';
+	import ModelInfoList from '$lib/components/ModelInfoList.svelte';
+	import ModelsCheckboxes from '$lib/components/ModelsCheckboxes.svelte';
 	import { ContentSwitcher, Switch } from 'carbon-components-svelte';
+	import { data_mock, anthropic, open_ai } from '$lib/timestamps';
+	import { selectedModels } from '$lib/stores/models';
 	import {
 		ALL_MODELS_ID,
 		ALL_MODELS_TEXT,
@@ -14,31 +22,25 @@
 		RESPONSE_TIME_DUAL_TEXT,
 		TOKENS_PER_SECOND_ID,
 		TOKENS_PER_SECOND_TEXT,
-		PROVIDERS
+		PROVIDERS,
+		PROVIDERS_INDEXES
 	} from '$lib/constants';
 
 	let sortType = ALL_MODELS_ID;
 	let graphType = RESPONSE_TIME_ID;
 
 	let selectedIndex = 0;
-	$: selectedProvider = Object.keys(PROVIDERS)[selectedIndex];
+	$: selectedProvider = PROVIDERS_INDEXES.get(selectedIndex);
 </script>
 
 <section>
+	<LineChartComponent />
+	<ModelsCheckboxes />
 	<div class="options-container">
 		<Dropdown
-			size="lg"
-			titleText="Sort by"
-			bind:selectedId={sortType}
-			items={[
-				{ id: ALL_MODELS_ID, text: ALL_MODELS_TEXT },
-				{ id: BY_PROVIDER_ID, text: BY_PROVIDER_TEXT }
-			]}
-		/>
-
-		<Dropdown
-			size="lg"
-			titleText="Graph by"
+			type="inline"
+			size="sm"
+			titleText="Graph by:"
 			bind:selectedId={graphType}
 			items={[
 				{ id: RESPONSE_TIME_ID, text: RESPONSE_TIME_TEXT },
@@ -46,19 +48,14 @@
 				{ id: TOKENS_PER_SECOND_ID, text: TOKENS_PER_SECOND_TEXT }
 			]}
 		/>
-
-		{#if sortType === BY_PROVIDER_ID}
-			<div class="switch-container">
-				<ContentSwitcher bind:selectedIndex>
-					{#each Object.entries(PROVIDERS).map( ([key, value]) => ({ key, value }) ) as { key, value }}
-						<Switch text={value} />
-					{/each}
-				</ContentSwitcher>
-			</div>
-		{/if}
+		<div class="custom-selection-button-container">
+			<Button kind="ghost">Custom Model Selection</Button>
+		</div>
 	</div>
-	<LineChartComponent sortType />
-	<!-- <p>{selectedProvider}</p> -->
+	<!-- {#each $selectedModels as model}
+		<h1>{model}</h1>
+	{/each} -->
+	<ModelInfoList bind:selectedProvider />
 </section>
 
 <style>
@@ -72,21 +69,25 @@
 
 	.options-container {
 		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
+		grid-template-columns: 1fr 3fr;
 		grid-template-rows: 1fr;
 		align-items: center;
-		gap: 2rem;
+		gap: 1rem;
 		width: 100%;
 		margin-bottom: 2rem;
 		/* height: 100%; */
 		/* border: 1px solid red; */
 	}
 
-	.switch-container {
-		height: 100%;
+	.custom-selection-button-container {
 		width: 100%;
 		display: flex;
-		flex-direction: column-reverse;
-		/* border: 1px solid red; */
+		justify-content: flex-end;
+	}
+
+	.provider-tab-container {
+		width: 100%;
+		height: 100%;
+		margin-bottom: 2rem;
 	}
 </style>
