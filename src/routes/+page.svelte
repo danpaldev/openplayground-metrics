@@ -34,7 +34,8 @@
 </script>
 
 <section>
-	<LineChartComponent />
+	<!-- <LineChartComponent /> -->
+	<ChartComponent />
 	<ModelsCheckboxes />
 	<div class="options-container">
 		<Dropdown
