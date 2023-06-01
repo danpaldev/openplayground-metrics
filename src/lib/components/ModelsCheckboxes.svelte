@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Checkbox } from 'carbon-components-svelte';
 	import { PROVIDERS, MODELS_BY_PROVIDER, ALL_MODELS_TEXT } from '$lib/constants';
-	import { selectedModels, selectedProviders } from '$lib/stores/models';
+	import { selectedModels, legendTracker, selectedProviders } from '$lib/stores/models';
+	import CustomCheckbox from './CustomCheckbox.svelte';
 
 	const handleModelChange = (e: Event) => {
 		let target = e.target as HTMLInputElement;
@@ -16,85 +17,115 @@
 
 	const handleProviderChange = (e: Event) => {
 		let target = e.target as HTMLInputElement;
-		if (target.checked) {
-			// selectedProviders.update((prevSelections) => [...prevSelections, target.value]);
 
+		if (target.checked) {
+			$selectedProviders = [...$selectedProviders, target.value];
 			selectedModels.update((prevSelections) => [
 				...new Set([...prevSelections, ...MODELS_BY_PROVIDER[target.value]])
 			]);
 		} else {
-			// selectedProviders.update((prevSelections) =>
-			// 	prevSelections.filter((provider) => provider !== target.value)
-			// );
+			selectedProviders.update((prevSelections) =>
+				prevSelections.filter((provider) => provider !== target.value)
+			);
 			selectedModels.update((prevSelections) =>
 				prevSelections.filter((model) => !MODELS_BY_PROVIDER[target.value].includes(model))
 			);
 		}
 	};
+
+	$: {
+		console.log($selectedProviders);
+	}
 </script>
 
 <section class="checkbox-container">
 	<div>
-		<Checkbox
-			class="checkbox-provider"
-			on:change={handleProviderChange}
-			labelText={PROVIDERS.OPEN_AI_TEXT}
+		<CustomCheckbox
+			handleChange={handleProviderChange}
+			label={PROVIDERS.OPEN_AI_TEXT}
 			value={PROVIDERS.OPEN_AI_ID}
+			checked={$selectedProviders.includes(PROVIDERS.OPEN_AI_ID)}
+			color={$selectedProviders.includes(PROVIDERS.OPEN_AI_ID) ? 'black' : ''}
 		/>
+
 		<div class="models-checkbox-container">
 			{#each MODELS_BY_PROVIDER[PROVIDERS.OPEN_AI_ID] as model}
 				{#if $selectedModels.indexOf(model) !== -1}
-					<Checkbox on:change={handleModelChange} labelText={model} value={model} checked={true} />
-				{:else}
-					<Checkbox
-						on:change={handleModelChange}
-						labelText={model}
+					<CustomCheckbox
+						checked={true}
+						handleChange={handleModelChange}
+						label={model}
 						value={model}
+						color={`${$legendTracker[model]}`}
+					/>
+				{:else}
+					<CustomCheckbox
 						checked={$selectedModels.includes(model)}
+						handleChange={handleModelChange}
+						label={model}
+						value={model}
+						color={`${$legendTracker[model]}`}
 					/>
 				{/if}
 			{/each}
 		</div>
 	</div>
 	<div>
-		<Checkbox
-			class="checkbox-provider"
-			on:change={handleProviderChange}
-			labelText={PROVIDERS.ANTHROPIC_TEXT}
+		<CustomCheckbox
+			handleChange={handleProviderChange}
+			label={PROVIDERS.ANTHROPIC_TEXT}
 			value={PROVIDERS.ANTHROPIC_ID}
+			checked={$selectedProviders.includes(PROVIDERS.ANTHROPIC_ID)}
+			color={$selectedProviders.includes(PROVIDERS.ANTHROPIC_ID) ? 'black' : ''}
 		/>
+
 		<div class="models-checkbox-container">
 			{#each MODELS_BY_PROVIDER[PROVIDERS.ANTHROPIC_ID] as model}
 				{#if $selectedModels.indexOf(model) !== -1}
-					<Checkbox on:change={handleModelChange} labelText={model} value={model} checked={true} />
-				{:else}
-					<Checkbox
-						on:change={handleModelChange}
-						labelText={model}
+					<CustomCheckbox
+						checked={true}
+						handleChange={handleModelChange}
+						label={model}
 						value={model}
+						color={`${$legendTracker[model]}`}
+					/>
+				{:else}
+					<CustomCheckbox
 						checked={$selectedModels.includes(model)}
+						handleChange={handleModelChange}
+						label={model}
+						value={model}
+						color={`${$legendTracker[model]}`}
 					/>
 				{/if}
 			{/each}
 		</div>
 	</div>
 	<div>
-		<Checkbox
-			class="checkbox-provider"
-			on:change={handleProviderChange}
-			labelText={PROVIDERS.OTHERS_TEXT}
+		<CustomCheckbox
+			handleChange={handleProviderChange}
+			label={PROVIDERS.OTHERS_TEXT}
 			value={PROVIDERS.OTHERS_ID}
+			checked={$selectedProviders.includes(PROVIDERS.OTHERS_ID)}
+			color={$selectedProviders.includes(PROVIDERS.OTHERS_ID) ? 'black' : ''}
 		/>
 		<div class="models-checkbox-container">
 			{#each MODELS_BY_PROVIDER[PROVIDERS.OTHERS_ID] as model}
 				{#if $selectedModels.indexOf(model) !== -1}
-					<Checkbox on:change={handleModelChange} labelText={model} value={model} checked={true} />
-				{:else}
-					<Checkbox
-						on:change={handleModelChange}
-						labelText={model}
+					<CustomCheckbox
+						checked={true}
+						handleChange={handleModelChange}
+						label={model}
 						value={model}
+						color={`${$legendTracker[model]}`}
+					/>
+				{:else}
+					<CustomCheckbox
 						checked={$selectedModels.includes(model)}
+						handleChange={handleModelChange}
+						label={model}
+						value={model}
+						color={`${$legendTracker[model]}`}
 					/>
 				{/if}
 			{/each}

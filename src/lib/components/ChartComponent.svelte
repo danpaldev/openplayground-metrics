@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { selectedModels } from '$lib/stores/models';
+	import { selectedModels, legendTracker } from '$lib/stores/models';
 	import { timestamps, open_ai } from '$lib/timestamps';
 	import { generateLinearChart } from './chartFunctions';
+	import { globalTheme } from '$lib/stores/settings';
 
 	let mySvg: SVGSVGElement;
 	let legendColors: {} | undefined = {};
@@ -23,51 +24,77 @@
 		const data = open_ai.filter((item) => $selectedModels.includes(item.model));
 		if (mySvg) {
 			tick().then(() => {
-				console.log(data);
-				legendColors = generateLinearChart(mySvg, data);
+				// console.log(data);
+				let legendData = generateLinearChart(mySvg, data);
+				legendTracker.set(legendData);
 			});
 		}
 	}
 
 	$: {
-		console.log(legendColors);
+		console.log($legendTracker);
 	}
 </script>
 
-<svg bind:this={mySvg} id="chart" width="900" height="500" />
+<svg
+	bind:this={mySvg}
+	class="chart"
+	class:chart-dark={$globalTheme !== 'white'}
+	width="900"
+	height="500"
+/>
 <div id="tooltip" style="position: absolute; visibility: hidden" />
 
 <style>
 	/* :global(.checkbox-provider > *) {
 		font-weight: 600;
 	} */
-	:global(#chart) {
+	:global(.chart) {
 		padding-left: 0.7rem;
 		display: block;
 		margin: auto;
 		background: #fff;
-		border: 1px solid #d2dff0;
+		/* background: red; */
+		/* border: 1px solid hsl(214, 50%, 88%); */
 		border-radius: 6px;
 		margin-top: 16px;
 		box-shadow: 0 -5px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
 			0 10px 15px -3px #0000000d;
 	}
 
+	:global(.chart-dark) {
+		padding-left: 0.7rem;
+		display: block;
+		margin: auto;
+		background: var(--cds-ui-background);
+		/* border: 1px solid var(--cds-background-inverse); */
+		border-radius: 6px;
+		margin-top: 16px;
+		box-shadow: 0 -5px 10px -3px var(--cds-background-inverse);
+		/* 0 2px 0px -8px var(--cds-background-inverse), 0 8px 10px -5px var(--cds-background-inverse); */
+	}
+
 	:global(.chart-legend) {
-		font-weight: 800;
+		/* font-weight: 800; */
+		fill: var(--cds-text-primary);
+		/* fill: red; */
 	}
 
 	:global(.x-axis-label) {
 		font-size: 0.8rem;
+		fill: var(--cds-text-primary);
 	}
 
 	:global(.y-axis-label) {
 		font-size: 0.7rem;
-		color: black;
+		color: var(--cds-text-primary);
 	}
 
+	/* --cds-text-primary */
+
 	:global(.y-axis-label .domain) {
-		stroke: rgb(204, 204, 204);
+		/* stroke: rgb(204, 204, 204); */
+		stroke: var(--cds-text-secondary);
 		/* stroke-width: 2; */
 	}
 
