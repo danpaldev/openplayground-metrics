@@ -12,6 +12,7 @@
 	import { ContentSwitcher, Switch } from 'carbon-components-svelte';
 	import { data_mock, anthropic, open_ai } from '$lib/timestamps';
 	import { selectedModels } from '$lib/stores/models';
+	import { metricStore } from '$lib/stores/metrics';
 	import {
 		ALL_MODELS_ID,
 		ALL_MODELS_TEXT,
@@ -36,7 +37,7 @@
 
 	//Set up the default models in onMount
 	onMount(() => {
-		selectedModels.set(data.models);
+		metricStore.set({ selectedModels: data.models, metrics: data.metrics });
 	});
 </script>
 

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import { selectedModels, legendTracker } from '$lib/stores/models';
+	import { metricStore } from '$lib/stores/metrics';
 	import { timestamps, open_ai } from '$lib/timestamps';
 	import { generateLinearChart } from './chartFunctions';
 	import { globalTheme } from '$lib/stores/settings';
@@ -14,8 +15,8 @@
 
 	$: {
 		// const data = modelsmetrics;
-		const data = metrics;
-		console.log(modelsMetrics);
+		const data = $metricStore.metrics;
+		// console.log(data);
 		if (mySvg) {
 			tick().then(() => {
 				// let legendData = generateLinearChart(mySvg, data);
@@ -28,10 +29,10 @@
 	$: {
 	}
 
-	$: {
-		console.log($legendTracker);
-		// modelsMetrics = modelsMetrics.filter((metricObj) => !$selectedModels.includes(metricObj.model));
-	}
+	// $: {
+	// 	console.log($legendTracker);
+	// 	// modelsMetrics = modelsMetrics.filter((metricObj) => !$selectedModels.includes(metricObj.model));
+	// }
 </script>
 
 <svg

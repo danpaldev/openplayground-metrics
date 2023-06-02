@@ -2,16 +2,31 @@
 	import { Checkbox } from 'carbon-components-svelte';
 	import { PROVIDERS, MODELS_BY_PROVIDER, ALL_MODELS_TEXT } from '$lib/constants';
 	import { selectedModels, legendTracker, selectedProviders } from '$lib/stores/models';
+	import { metricStore } from '$lib/stores/metrics';
+	import { fetchMetricsForModel } from '$lib/utils';
 	import CustomCheckbox from './CustomCheckbox.svelte';
 
-	const handleModelChange = (e: Event) => {
+	const handleModelChange = async (e: Event) => {
 		let target = e.target as HTMLInputElement;
 		if (target.checked) {
-			selectedModels.update((prevSelections) => [...prevSelections, target.value]);
+			try {
+				const metricsForModel = await fetchMetricsForModel(target.value);
+				metricStore.update((prevState) => ({
+					selectedModels: [...prevState.selectedModels, target.value],
+					metrics: [...prevState.metrics, ...metricsForModel.metrics]
+				}));
+			} catch (error) {
+				if (error instanceof Error) {
+					window.alert(`An error occurred: ${error.message}`);
+				} else {
+					window.alert(`An unexpected error occurred: ${error}`);
+				}
+			}
 		} else {
-			selectedModels.update((prevSelections) =>
-				prevSelections.filter((model) => model !== target.value)
-			);
+			metricStore.update((prevState) => ({
+				selectedModels: prevState.selectedModels.filter((model) => model !== target.value),
+				metrics: prevState.metrics.filter((metricObject) => metricObject.model !== target.value)
+			}));
 		}
 	};
 
@@ -51,7 +66,7 @@
 
 		<div class="models-checkbox-container">
 			{#each MODELS_BY_PROVIDER[PROVIDERS.OPEN_AI_ID] as model}
-				{#if $selectedModels.indexOf(model) !== -1}
+				{#if $metricStore.selectedModels.indexOf(model) !== -1}
 					<CustomCheckbox
 						checked={true}
 						handleChange={handleModelChange}
@@ -61,7 +76,7 @@
 					/>
 				{:else}
 					<CustomCheckbox
-						checked={$selectedModels.includes(model)}
+						checked={$metricStore.selectedModels.includes(model)}
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
@@ -83,7 +98,7 @@
 
 		<div class="models-checkbox-container">
 			{#each MODELS_BY_PROVIDER[PROVIDERS.ANTHROPIC_ID] as model}
-				{#if $selectedModels.indexOf(model) !== -1}
+				{#if $metricStore.selectedModels.indexOf(model) !== -1}
 					<CustomCheckbox
 						checked={true}
 						handleChange={handleModelChange}
@@ -93,7 +108,7 @@
 					/>
 				{:else}
 					<CustomCheckbox
-						checked={$selectedModels.includes(model)}
+						checked={$metricStore.selectedModels.includes(model)}
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
@@ -114,7 +129,7 @@
 		/>
 		<div class="models-checkbox-container">
 			{#each MODELS_BY_PROVIDER[PROVIDERS.FOREFRONT_ID] as model}
-				{#if $selectedModels.indexOf(model) !== -1}
+				{#if $metricStore.selectedModels.indexOf(model) !== -1}
 					<CustomCheckbox
 						checked={true}
 						handleChange={handleModelChange}
@@ -124,7 +139,7 @@
 					/>
 				{:else}
 					<CustomCheckbox
-						checked={$selectedModels.includes(model)}
+						checked={$metricStore.selectedModels.includes(model)}
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
@@ -145,7 +160,7 @@
 		/>
 		<div class="models-checkbox-container">
 			{#each MODELS_BY_PROVIDER[PROVIDERS.ALEPH_ALPHA_ID] as model}
-				{#if $selectedModels.indexOf(model) !== -1}
+				{#if $metricStore.selectedModels.indexOf(model) !== -1}
 					<CustomCheckbox
 						checked={true}
 						handleChange={handleModelChange}
@@ -155,7 +170,7 @@
 					/>
 				{:else}
 					<CustomCheckbox
-						checked={$selectedModels.includes(model)}
+						checked={$metricStore.selectedModels.includes(model)}
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
@@ -167,7 +182,7 @@
 	</div>
 </section>
 
-{#each $selectedModels as model}
+{#each $metricStore.selectedModels as model}
 	<p>{model}</p>
 {/each}
 
