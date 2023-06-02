@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
-	import { selectedModels, legendTracker } from '$lib/stores/models';
+	import { legendTracker } from '$lib/stores/models';
 	import { metricStore } from '$lib/stores/metrics';
-	import { timestamps, open_ai } from '$lib/timestamps';
 	import { generateLinearChart } from './chartFunctions';
 	import { globalTheme } from '$lib/stores/settings';
-	import { mode } from 'd3';
 	export let modelsMetrics;
 
 	let mySvg: SVGSVGElement;
