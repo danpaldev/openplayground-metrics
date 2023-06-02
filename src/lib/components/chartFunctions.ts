@@ -140,6 +140,9 @@ export const generateLinearChart = (targetElement: SVGSVGElement, dataOriginal: 
 		.range([...d3.schemeTableau10, ...d3.schemeSet3, ...d3.schemePastel1]);
 	const colorMap = {};
 
+	plottedDataGroup.selectAll('path').remove();
+	plottedDataGroup.selectAll('circle').remove();
+
 	models.forEach((values, modelName) => {
 		const modelColor = color(modelName);
 		colorMap[modelName] = modelColor;
