@@ -1,30 +1,24 @@
 <script lang="ts">
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { selectedModels, legendTracker } from '$lib/stores/models';
 	import { timestamps, open_ai } from '$lib/timestamps';
 	import { generateLinearChart } from './chartFunctions';
 	import { globalTheme } from '$lib/stores/settings';
+	import { mode } from 'd3';
+	export let modelsMetrics;
 
 	let mySvg: SVGSVGElement;
 	let legendColors: {} | undefined = {};
 
-	// $: {
-	// 	const data = open_ai.filter((item) => $selectedModels.includes(item.model));
-	// 	if (mySvg && data.length) {
-	// 		// console.log(data);
-	// 		// generateLinearChart(mySvg, data);
-	// 		tick().then(() => {
-	// 			console.log(data);
-	// 			legendColors = generateLinearChart(mySvg, data);
-	// 		});
-	// 	}
-	// }
+	let metrics = modelsMetrics;
 
 	$: {
-		const data = open_ai.filter((item) => $selectedModels.includes(item.model));
+		// const data = modelsmetrics;
+		const data = metrics;
+		console.log(modelsMetrics);
 		if (mySvg) {
 			tick().then(() => {
-				// console.log(data);
+				// let legendData = generateLinearChart(mySvg, data);
 				let legendData = generateLinearChart(mySvg, data);
 				legendTracker.set(legendData);
 			});
@@ -32,7 +26,11 @@
 	}
 
 	$: {
+	}
+
+	$: {
 		console.log($legendTracker);
+		// modelsMetrics = modelsMetrics.filter((metricObj) => !$selectedModels.includes(metricObj.model));
 	}
 </script>
 

@@ -46,6 +46,7 @@
 			value={PROVIDERS.OPEN_AI_ID}
 			checked={$selectedProviders.includes(PROVIDERS.OPEN_AI_ID)}
 			color={$selectedProviders.includes(PROVIDERS.OPEN_AI_ID) ? 'black' : ''}
+			bold={true}
 		/>
 
 		<div class="models-checkbox-container">
@@ -77,6 +78,7 @@
 			value={PROVIDERS.ANTHROPIC_ID}
 			checked={$selectedProviders.includes(PROVIDERS.ANTHROPIC_ID)}
 			color={$selectedProviders.includes(PROVIDERS.ANTHROPIC_ID) ? 'black' : ''}
+			bold={true}
 		/>
 
 		<div class="models-checkbox-container">
@@ -104,13 +106,45 @@
 	<div>
 		<CustomCheckbox
 			handleChange={handleProviderChange}
-			label={PROVIDERS.OTHERS_TEXT}
-			value={PROVIDERS.OTHERS_ID}
-			checked={$selectedProviders.includes(PROVIDERS.OTHERS_ID)}
-			color={$selectedProviders.includes(PROVIDERS.OTHERS_ID) ? 'black' : ''}
+			label={PROVIDERS.FOREFRONT_TEXT}
+			value={PROVIDERS.FOREFRONT_ID}
+			checked={$selectedProviders.includes(PROVIDERS.FOREFRONT_ID)}
+			color={$selectedProviders.includes(PROVIDERS.FOREFRONT_ID) ? 'black' : ''}
+			bold={true}
 		/>
 		<div class="models-checkbox-container">
-			{#each MODELS_BY_PROVIDER[PROVIDERS.OTHERS_ID] as model}
+			{#each MODELS_BY_PROVIDER[PROVIDERS.FOREFRONT_ID] as model}
+				{#if $selectedModels.indexOf(model) !== -1}
+					<CustomCheckbox
+						checked={true}
+						handleChange={handleModelChange}
+						label={model}
+						value={model}
+						color={`${$legendTracker[model]}`}
+					/>
+				{:else}
+					<CustomCheckbox
+						checked={$selectedModels.includes(model)}
+						handleChange={handleModelChange}
+						label={model}
+						value={model}
+						color={`${$legendTracker[model]}`}
+					/>
+				{/if}
+			{/each}
+		</div>
+	</div>
+	<div>
+		<CustomCheckbox
+			handleChange={handleProviderChange}
+			label={PROVIDERS.ALEPH_ALPHA_TEXT}
+			value={PROVIDERS.ALEPH_ALPHA_ID}
+			checked={$selectedProviders.includes(PROVIDERS.ALEPH_ALPHA_ID)}
+			color={$selectedProviders.includes(PROVIDERS.ALEPH_ALPHA_ID) ? 'black' : ''}
+			bold={true}
+		/>
+		<div class="models-checkbox-container">
+			{#each MODELS_BY_PROVIDER[PROVIDERS.ALEPH_ALPHA_ID] as model}
 				{#if $selectedModels.indexOf(model) !== -1}
 					<CustomCheckbox
 						checked={true}
@@ -147,7 +181,7 @@
 	}
 
 	.models-checkbox-container {
-		margin-top: 0.5rem;
+		margin-top: 0.8rem;
 	}
 
 	:global(.checkbox-provider > *) {

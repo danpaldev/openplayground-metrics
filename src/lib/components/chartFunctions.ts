@@ -8,19 +8,29 @@ export const generateLinearChart = (targetElement: SVGSVGElement, dataOriginal: 
 	// chart.selectAll('*').remove();
 	// const chart = d3.select('#chart');
 	// if (!chart?.attr) return;
-	chart.selectAll('*').remove();
+	// chart.selectAll('path,circle').remove();
+	chart.selectAll('.plotted-data').remove();
 	const margin = { top: 20, right: 30, bottom: 50, left: 70 };
 	const width = chart.attr('width') - margin.left - margin.right;
 	const height = chart.attr('height') - margin.top - margin.bottom;
 
-	const parseTime = d3.timeParse('%Y-%m-%dT%H:%M:%S');
+	// const parseTime = d3.timeParse('%Y-%m-%dT%H:%M:%S');
+	const parseTime = d3.timeParse('%Y-%m-%dT%H:%M:%S.%LZ');
 	// data.forEach((d) => {
 	// 	d.timestamp = parseTime(d.timestamp);
 	// });
 
 	const data = dataOriginal.map((d) => {
-		return { ...d, timestamp: parseTime(d.timestamp) };
+		const epochToIso = new Date(parseInt(d.start_time) * 1000).toISOString();
+		// console.log(epochToIso);
+		return {
+			...d,
+			timestamp: parseTime(epochToIso),
+			duration: d.completion_response_time
+		};
 	});
+
+	// console.log(data);
 
 	const x = d3
 		.scaleTime()
@@ -30,7 +40,7 @@ export const generateLinearChart = (targetElement: SVGSVGElement, dataOriginal: 
 	const y = d3
 		.scaleLinear()
 		// 0-60 seconds
-		.domain([0, 60])
+		.domain([0, 150])
 		.range([height - margin.bottom, margin.top]);
 
 	const line = d3
@@ -62,7 +72,8 @@ export const generateLinearChart = (targetElement: SVGSVGElement, dataOriginal: 
 			//.attr("class", "chart-line")
 			.attr('stroke', modelColor)
 			.attr('stroke-width', 3.5)
-			.attr('d', line);
+			.attr('d', line)
+			.attr('class', 'plotted-data');
 		// Create an invisible circle for each data point in the line
 		values.forEach((d) => {
 			g.append('circle')
@@ -70,6 +81,7 @@ export const generateLinearChart = (targetElement: SVGSVGElement, dataOriginal: 
 				.attr('cy', y(d.duration))
 				.attr('r', 6) // Set a small radius for hover activation
 				.style('opacity', 0) // We don't want to see the circle, just its hover
+				.attr('class', 'plotted-data')
 				.on('mouseover', function (event) {
 					// Getting the cursor position
 					const [x, y] = d3.pointer(event);

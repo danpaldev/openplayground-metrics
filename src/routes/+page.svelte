@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '@carbon/charts/styles.css';
 	import { Dropdown, Button } from 'carbon-components-svelte';
+	export let data;
 	//NEW
 	// import LinearChartComponent from '$lib/components/LinearChartComponent.svelte';
 	//OLD
@@ -25,17 +26,23 @@
 		PROVIDERS,
 		PROVIDERS_INDEXES
 	} from '$lib/constants';
+	import { onMount } from 'svelte';
 
 	let sortType = ALL_MODELS_ID;
 	let graphType = RESPONSE_TIME_ID;
 
 	let selectedIndex = 0;
 	$: selectedProvider = PROVIDERS_INDEXES.get(selectedIndex);
+
+	//Set up the default models in onMount
+	onMount(() => {
+		selectedModels.set(data.models);
+	});
 </script>
 
 <section>
 	<!-- <LineChartComponent /> -->
-	<ChartComponent />
+	<ChartComponent modelsMetrics={data.metrics} />
 	<ModelsCheckboxes />
 	<div class="options-container">
 		<Dropdown

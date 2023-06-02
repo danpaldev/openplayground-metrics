@@ -3,6 +3,7 @@
 	export let color = 'transparent';
 	export let label = '';
 	export let value = '';
+	export let bold = false;
 	export let handleChange: (e: Event) => void = () => {};
 
 	let id = Math.random().toString(36).substring(2);
@@ -33,7 +34,7 @@
 		{/if}
 	</div>
 
-	<span class="label-text">{label}</span>
+	<span class={bold ? 'label-text-bold' : 'label-text'}>{label}</span>
 </label>
 
 <style>
@@ -72,6 +73,14 @@
 		margin-left: 8px;
 		cursor: pointer;
 		display: flex;
+		/* border: 8px; */
+	}
+
+	.label-text-bold {
+		margin-left: 8px;
+		cursor: pointer;
+		display: flex;
+		font-weight: 800;
 		/* border: 8px; */
 	}
 

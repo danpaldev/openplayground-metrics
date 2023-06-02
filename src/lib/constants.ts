@@ -17,7 +17,11 @@ export const PROVIDERS = {
 	OTHERS_ID: 'others',
 	OPEN_AI_TEXT: 'OpenAI',
 	ANTHROPIC_TEXT: 'Anthropic',
-	OTHERS_TEXT: 'Others'
+	OTHERS_TEXT: 'Others',
+	ALEPH_ALPHA_ID: 'aleph-alpha',
+	ALEPH_ALPHA_TEXT: 'Aleph Alpha',
+	FOREFRONT_ID: 'forefront',
+	FOREFRONT_TEXT: 'Forefront'
 };
 
 export const PROVIDERS_INDEXES = new Map([
@@ -66,15 +70,17 @@ export const MODELS_BY_PROVIDER = {
 		'claude-v1-100k',
 		'claude-instant-v1-100k'
 	],
-	[PROVIDERS.OTHERS_ID]: [
+	[PROVIDERS.ALEPH_ALPHA_ID]: [
 		'luminous-supreme-control',
 		'luminous-base',
 		'luminous-supreme',
-		'luminous-extended',
-		'gpt-j-6b-vanilla',
+		'luminous-extended'
+	],
+	[PROVIDERS.FOREFRONT_ID]: [
 		'pythia-6.9b',
 		'pythia-12b',
-		'gpt-neox-20b-vanilla',
-		'pythia-20b'
+		'pythia-20b',
+		'gpt-j-6b-vanilla',
+		'gpt-neox-20b-vanilla'
 	]
 };
