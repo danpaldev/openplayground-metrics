@@ -2489,8 +2489,8 @@ export const others = [
 
 export const providersMap = new Map([
 	[PROVIDERS.OPEN_AI_ID, open_ai],
-	[PROVIDERS.ANTHROPIC_ID, anthropic],
-	[PROVIDERS.OTHERS_ID, others]
+	[PROVIDERS.ANTHROPIC_ID, anthropic]
+	// [PROVIDERS.OTHERS_ID, others]
 ]);
 
 export const data_mock = [

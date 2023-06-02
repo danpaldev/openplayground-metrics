@@ -12,12 +12,10 @@ export const TOKENS_PER_SECOND_TEXT = 'Tokens/Second';
 
 //Providers constants
 export const PROVIDERS = {
-	OPEN_AI_ID: 'open_ai',
+	OPEN_AI_ID: 'openai',
 	ANTHROPIC_ID: 'anthropic',
-	OTHERS_ID: 'others',
 	OPEN_AI_TEXT: 'OpenAI',
 	ANTHROPIC_TEXT: 'Anthropic',
-	OTHERS_TEXT: 'Others',
 	ALEPH_ALPHA_ID: 'aleph-alpha',
 	ALEPH_ALPHA_TEXT: 'Aleph Alpha',
 	FOREFRONT_ID: 'forefront',
@@ -26,8 +24,7 @@ export const PROVIDERS = {
 
 export const PROVIDERS_INDEXES = new Map([
 	[0, PROVIDERS.OPEN_AI_ID],
-	[1, PROVIDERS.ANTHROPIC_ID],
-	[2, PROVIDERS.OTHERS_ID]
+	[1, PROVIDERS.ANTHROPIC_ID]
 ]);
 
 export const second_try = new Map([
@@ -61,8 +58,8 @@ export const MODELS_BY_PROVIDER = {
 		'text-curie-001',
 		'text-davinci-003',
 		'gpt-3.5-turbo',
-		'gpt-4',
-		'text-davinci-002'
+		'gpt-4'
+		// 'text-davinci-002'
 	],
 	[PROVIDERS.ANTHROPIC_ID]: [
 		'claude-instant-v1',

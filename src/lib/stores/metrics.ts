@@ -1,3 +1,12 @@
-import { writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
+import type { Metric } from '$lib/utils';
 
-export const metricStore = writable({ selectedModels: [], metrics: [] });
+type MetricStore = {
+	selectedModels: string[];
+	metrics: Metric[];
+};
+
+export const metricStore: Writable<MetricStore> = writable({
+	selectedModels: [],
+	metrics: []
+});

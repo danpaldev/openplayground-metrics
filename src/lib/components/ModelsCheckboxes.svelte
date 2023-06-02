@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { Checkbox } from 'carbon-components-svelte';
-	import { PROVIDERS, MODELS_BY_PROVIDER, ALL_MODELS_TEXT } from '$lib/constants';
-	import { selectedModels, legendTracker, selectedProviders } from '$lib/stores/models';
+	import { PROVIDERS, MODELS_BY_PROVIDER } from '$lib/constants';
+	import { legendTracker, selectedProviders } from '$lib/stores/models';
 	import { metricStore } from '$lib/stores/metrics';
-	import { fetchMetricsForModel } from '$lib/utils';
+	import { fetchMetricsForModel, fetchMetricsForProvider } from '$lib/utils';
 	import CustomCheckbox from './CustomCheckbox.svelte';
 
 	const handleModelChange = async (e: Event) => {
@@ -30,21 +29,34 @@
 		}
 	};
 
-	const handleProviderChange = (e: Event) => {
+	const handleProviderChange = async (e: Event) => {
 		let target = e.target as HTMLInputElement;
 
 		if (target.checked) {
-			$selectedProviders = [...$selectedProviders, target.value];
-			selectedModels.update((prevSelections) => [
-				...new Set([...prevSelections, ...MODELS_BY_PROVIDER[target.value]])
-			]);
+			try {
+				const metricsForProvider = await fetchMetricsForProvider(target.value);
+				metricStore.update((prevState) => ({
+					selectedModels: [...prevState.selectedModels, ...metricsForProvider.models],
+					metrics: [
+						...prevState.metrics.filter((metricObj) => metricObj.provider !== target.value),
+						...metricsForProvider.metrics
+					]
+				}));
+			} catch (error) {
+				if (error instanceof Error) {
+					window.alert(`An error occurred: ${error.message}`);
+				} else {
+					window.alert(`An unexpected error occurred: ${error}`);
+				}
+			}
 		} else {
-			selectedProviders.update((prevSelections) =>
-				prevSelections.filter((provider) => provider !== target.value)
-			);
-			selectedModels.update((prevSelections) =>
-				prevSelections.filter((model) => !MODELS_BY_PROVIDER[target.value].includes(model))
-			);
+			MODELS_BY_PROVIDER[target.value].includes('asdf');
+			metricStore.update((prevState) => ({
+				selectedModels: prevState.selectedModels.filter(
+					(model) => !MODELS_BY_PROVIDER[target.value].includes(model)
+				),
+				metrics: prevState.metrics.filter((metricObject) => metricObject.provider !== target.value)
+			}));
 		}
 	};
 

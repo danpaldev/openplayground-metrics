@@ -2,9 +2,6 @@
 	import '@carbon/charts/styles.css';
 	import { Dropdown, Button } from 'carbon-components-svelte';
 	export let data;
-	//NEW
-	// import LinearChartComponent from '$lib/components/LinearChartComponent.svelte';
-	//OLD
 	import LineChartComponent from '$lib/components/LineChartComponent.svelte';
 	import ChartComponent from '$lib/components/ChartComponent.svelte';
 	import ModelInfoList from '$lib/components/ModelInfoList.svelte';
@@ -35,7 +32,7 @@
 	let selectedIndex = 0;
 	$: selectedProvider = PROVIDERS_INDEXES.get(selectedIndex);
 
-	//Set up the default models in onMount
+	//Set up the default models & metrics at first render
 	onMount(() => {
 		metricStore.set({ selectedModels: data.models, metrics: data.metrics });
 	});
