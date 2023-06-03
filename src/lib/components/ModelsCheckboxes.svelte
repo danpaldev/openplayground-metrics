@@ -85,7 +85,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker[model]}`}
+						color={`${$legendTracker.get(model)}`}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -93,7 +93,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker[model]}`}
+						color={`${$legendTracker.get(model)}`}
 					/>
 				{/if}
 			{/each}
@@ -117,7 +117,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker[model]}`}
+						color={`${$legendTracker.get(model)}`}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -125,7 +125,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker[model]}`}
+						color={`${$legendTracker.get(model)}`}
 					/>
 				{/if}
 			{/each}
@@ -148,7 +148,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker[model]}`}
+						color={`${$legendTracker.get(model)}`}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -156,7 +156,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker[model]}`}
+						color={`${$legendTracker.get(model)}`}
 					/>
 				{/if}
 			{/each}
@@ -179,7 +179,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker[model]}`}
+						color={`${$legendTracker.get(model)}`}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -187,7 +187,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker[model]}`}
+						color={`${$legendTracker.get(model)}`}
 					/>
 				{/if}
 			{/each}

@@ -4,33 +4,26 @@
 	import { metricStore } from '$lib/stores/metrics';
 	import { generateLinearChart } from './chartFunctions';
 	import { globalTheme } from '$lib/stores/settings';
-	export let modelsMetrics;
 
 	let mySvg: SVGSVGElement;
-	let legendColors: {} | undefined = {};
-
-	let metrics = modelsMetrics;
+	/*
+	//We have to create a "local" copy of the legendTracker store's content
+	to prevent an infinite loop on the reactive block!
+	*/
+	let legendColors: Map<string, string> = $legendTracker;
 
 	$: {
-		// const data = modelsmetrics;
 		const data = $metricStore.metrics;
-		// console.log(data);
 		if (mySvg) {
 			tick().then(() => {
-				// let legendData = generateLinearChart(mySvg, data);
-				let legendData = generateLinearChart(mySvg, data);
-				legendTracker.set(legendData);
+				let newLegendData = generateLinearChart(mySvg, data, legendColors);
+
+				for (const [key, value] of Object.entries(newLegendData)) {
+					legendTracker.update((prevMap) => prevMap.set(key, value));
+				}
 			});
 		}
 	}
-
-	$: {
-	}
-
-	// $: {
-	// 	console.log($legendTracker);
-	// 	// modelsMetrics = modelsMetrics.filter((metricObj) => !$selectedModels.includes(metricObj.model));
-	// }
 </script>
 
 <svg

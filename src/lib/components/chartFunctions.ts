@@ -3,7 +3,11 @@
 import * as d3 from 'd3';
 import { tooltipValueFormatter } from '$lib/utils.js';
 
-export const generateLinearChart = (targetElement: SVGSVGElement, dataOriginal: unknown) => {
+export const generateLinearChart = (
+	targetElement: SVGSVGElement,
+	dataOriginal: unknown,
+	legendTracker: Map<string, string>
+) => {
 	const chart = d3.select(targetElement);
 	const margin = { top: 20, right: 30, bottom: 50, left: 70 };
 	const width = chart.attr('width') - margin.left - margin.right;
@@ -138,14 +142,24 @@ export const generateLinearChart = (targetElement: SVGSVGElement, dataOriginal: 
 	const color = d3
 		.scaleOrdinal()
 		.range([...d3.schemeTableau10, ...d3.schemeSet3, ...d3.schemePastel1]);
-	const colorMap = {};
+	const colorMap: {
+		[key: string]: string;
+	} = {};
 
 	plottedDataGroup.selectAll('path').remove();
 	plottedDataGroup.selectAll('circle').remove();
 
 	models.forEach((values, modelName) => {
-		const modelColor = color(modelName);
-		colorMap[modelName] = modelColor;
+		let modelColor;
+
+		if (legendTracker.get(modelName)) {
+			color(modelName);
+			modelColor = legendTracker.get(modelName);
+		} else {
+			modelColor = color(`${modelName}${Math.random}`);
+			legendTracker.set(modelName, modelColor);
+			colorMap[modelName] = modelColor;
+		}
 
 		const path = plottedDataGroup
 			.append('path')

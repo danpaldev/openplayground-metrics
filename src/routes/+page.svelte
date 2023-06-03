@@ -2,7 +2,6 @@
 	import '@carbon/charts/styles.css';
 	import { Dropdown, Button } from 'carbon-components-svelte';
 	export let data;
-	import LineChartComponent from '$lib/components/LineChartComponent.svelte';
 	import DatePicker from '$lib/components/DatePicker.svelte';
 	import ChartComponent from '$lib/components/ChartComponent.svelte';
 	import ModelInfoList from '$lib/components/ModelInfoList.svelte';
@@ -40,7 +39,7 @@
 <section>
 	<!-- <LineChartComponent /> -->
 	<DatePicker />
-	<ChartComponent modelsMetrics={data.metrics} />
+	<ChartComponent />
 	<ModelsCheckboxes />
 	<div class="options-container">
 		<Dropdown
