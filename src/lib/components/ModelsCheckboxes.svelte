@@ -2,6 +2,7 @@
 	import { PROVIDERS, MODELS_BY_PROVIDER } from '$lib/constants';
 	import { legendTracker, selectedProviders } from '$lib/stores/models';
 	import { metricStore } from '$lib/stores/metrics';
+	import { timestampsStore } from '$lib/stores/timestamps';
 	import { fetchMetricsForModel, fetchMetricsForProvider } from '$lib/utils';
 	import CustomCheckbox from './CustomCheckbox.svelte';
 
@@ -9,7 +10,7 @@
 		let target = e.target as HTMLInputElement;
 		if (target.checked) {
 			try {
-				const metricsForModel = await fetchMetricsForModel(target.value);
+				const metricsForModel = await fetchMetricsForModel(target.value, $timestampsStore);
 				metricStore.update((prevState) => ({
 					selectedModels: [...prevState.selectedModels, target.value],
 					metrics: [...prevState.metrics, ...metricsForModel.metrics]
@@ -34,7 +35,7 @@
 
 		if (target.checked) {
 			try {
-				const metricsForProvider = await fetchMetricsForProvider(target.value);
+				const metricsForProvider = await fetchMetricsForProvider(target.value, $timestampsStore);
 				metricStore.update((prevState) => ({
 					selectedModels: [...prevState.selectedModels, ...metricsForProvider.models],
 					metrics: [

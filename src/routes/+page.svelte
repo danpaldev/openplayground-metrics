@@ -3,12 +3,11 @@
 	import { Dropdown, Button } from 'carbon-components-svelte';
 	export let data;
 	import LineChartComponent from '$lib/components/LineChartComponent.svelte';
+	import DatePicker from '$lib/components/DatePicker.svelte';
 	import ChartComponent from '$lib/components/ChartComponent.svelte';
 	import ModelInfoList from '$lib/components/ModelInfoList.svelte';
 	import ModelsCheckboxes from '$lib/components/ModelsCheckboxes.svelte';
 	import { ContentSwitcher, Switch } from 'carbon-components-svelte';
-	import { data_mock, anthropic, open_ai } from '$lib/timestamps';
-	import { selectedModels } from '$lib/stores/models';
 	import { metricStore } from '$lib/stores/metrics';
 	import {
 		ALL_MODELS_ID,
@@ -40,6 +39,7 @@
 
 <section>
 	<!-- <LineChartComponent /> -->
+	<DatePicker />
 	<ChartComponent modelsMetrics={data.metrics} />
 	<ModelsCheckboxes />
 	<div class="options-container">
@@ -61,7 +61,8 @@
 	<!-- {#each $selectedModels as model}
 		<h1>{model}</h1>
 	{/each} -->
-	<ModelInfoList bind:selectedProvider />
+	<!-- <ModelInfoList bind:selectedProvider /> -->
+	<div />
 </section>
 
 <style>

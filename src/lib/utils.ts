@@ -9,9 +9,9 @@ export const tooltipValueFormatter = (value: any): string => {
 	return value;
 };
 
-type Timestamps = {
-	start: string;
-	end: string;
+export type Timestamps = {
+	start?: number;
+	end?: number;
 };
 
 export type Metric = {
@@ -30,7 +30,7 @@ export type MetricsResponseData = {
 
 export const fetchMetricsForModel = async (
 	model: string,
-	timestamps?: Timestamps
+	timestamps: Timestamps
 ): Promise<MetricsResponseData> => {
 	const url = 'http://127.0.0.1:8000/metrics/'; // Replace with your URL
 	const data = {
@@ -56,12 +56,15 @@ export const fetchMetricsForModel = async (
 	return metrics;
 };
 
-export const fetchMetricsForProvider = async (provider: string): Promise<MetricsResponseData> => {
+export const fetchMetricsForProvider = async (
+	provider: string,
+	timestamps: Timestamps
+): Promise<MetricsResponseData> => {
 	const target_models: string[] = MODELS_BY_PROVIDER[provider];
-	const url = 'http://127.0.0.1:8000/metrics/'; // Replace with your URL
+	const url = 'http://127.0.0.1:8000/metrics/';
 	const data = {
-		models: target_models
-		// timestamps
+		models: target_models,
+		timestamps
 	};
 	const response = await fetch(url, {
 		method: 'POST',
@@ -70,6 +73,34 @@ export const fetchMetricsForProvider = async (provider: string): Promise<Metrics
 		},
 		body: JSON.stringify(data)
 	});
+	if (!response.ok) {
+		throw new Error(`HTTP error! status: ${response.status}`);
+	}
+
+	const metrics = await response.json();
+
+	// console.log(metrics);
+	return metrics;
+};
+
+export const updateMetricsWithTimestamps = async (
+	models: string[],
+	timestamps: Timestamps
+): Promise<MetricsResponseData> => {
+	const url = 'http://127.0.0.1:8000/metrics/';
+	const data = {
+		models: models,
+		timestamps
+	};
+
+	const response = await fetch(url, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data)
+	});
+
 	if (!response.ok) {
 		throw new Error(`HTTP error! status: ${response.status}`);
 	}
