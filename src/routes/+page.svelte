@@ -41,7 +41,7 @@
 	<DatePicker />
 	<ChartComponent />
 	<ModelsCheckboxes />
-	<div class="options-container">
+	<!-- <div class="options-container">
 		<Dropdown
 			type="inline"
 			size="sm"
@@ -56,7 +56,7 @@
 		<div class="custom-selection-button-container">
 			<Button kind="ghost">Custom Model Selection</Button>
 		</div>
-	</div>
+	</div> -->
 	<!-- {#each $selectedModels as model}
 		<h1>{model}</h1>
 	{/each} -->

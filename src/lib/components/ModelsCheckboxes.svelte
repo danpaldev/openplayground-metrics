@@ -51,7 +51,6 @@
 				}
 			}
 		} else {
-			MODELS_BY_PROVIDER[target.value].includes('asdf');
 			metricStore.update((prevState) => ({
 				selectedModels: prevState.selectedModels.filter(
 					(model) => !MODELS_BY_PROVIDER[target.value].includes(model)
@@ -85,7 +84,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker.get(model)}`}
+						color={`${$legendTracker.get(model) || 'transparent'}`}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -93,7 +92,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker.get(model)}`}
+						color={`${$legendTracker.get(model) || 'transparent'}`}
 					/>
 				{/if}
 			{/each}
@@ -117,7 +116,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker.get(model)}`}
+						color={`${$legendTracker.get(model) || 'transparent'}`}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -125,7 +124,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker.get(model)}`}
+						color={`${$legendTracker.get(model) || 'transparent'}`}
 					/>
 				{/if}
 			{/each}
@@ -148,7 +147,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker.get(model)}`}
+						color={`${$legendTracker.get(model) || 'transparent'}`}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -156,7 +155,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker.get(model)}`}
+						color={`${$legendTracker.get(model) || 'transparent'}`}
 					/>
 				{/if}
 			{/each}
@@ -179,7 +178,7 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker.get(model)}`}
+						color={`${$legendTracker.get(model) || 'transparent'}`}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -187,17 +186,13 @@
 						handleChange={handleModelChange}
 						label={model}
 						value={model}
-						color={`${$legendTracker.get(model)}`}
+						color={`${$legendTracker.get(model) || 'transparent'}`}
 					/>
 				{/if}
 			{/each}
 		</div>
 	</div>
 </section>
-
-{#each $metricStore.selectedModels as model}
-	<p>{model}</p>
-{/each}
 
 <style>
 	.checkbox-container {

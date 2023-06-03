@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let checked = false;
-	export let color = 'transparent';
+	export let color = '';
 	export let label = '';
 	export let value = '';
 	export let bold = false;
@@ -22,7 +22,7 @@
 		bind:value
 		on:change={onCheckboxChange}
 	/>
-	<div class="container">
+	<div class={checked ? 'container-checked' : 'container'}>
 		{#if checked}
 			<svg xmlns="http://www.w3.org/2000/svg" width="150%" height="150%" viewBox="0 0 512 512"
 				><path
@@ -52,22 +52,13 @@
 		border-radius: 2px;
 	}
 
-	/* .checkbox::before {
-		content: '';
-		display: block;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: 14px;
-		height: 14px;
-		background-color: currentColor;
-		transform: translate(-50%, -50%) scale(var(--scale, 0));
-		transition: transform 0.1s;
-	} */
-
-	/* .checkbox.checked::before {
-		--scale: 1;
-	} */
+	.container-checked {
+		width: 1.1rem;
+		height: 1.1rem;
+		display: grid;
+		place-items: center;
+		border-radius: 2px;
+	}
 
 	.label-text {
 		margin-left: 8px;
