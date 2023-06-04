@@ -40,7 +40,7 @@
 		padding-left: 0.7rem;
 		display: block;
 		margin: auto;
-		background: #fff;
+		background: var(--cds-ui-background);
 		border-radius: 6px;
 		margin-top: 16px;
 		box-shadow: 0 -5px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
