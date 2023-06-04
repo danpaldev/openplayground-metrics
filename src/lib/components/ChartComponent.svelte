@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tick } from 'svelte';
+	import { tick, onMount } from 'svelte';
 	import { legendTracker } from '$lib/stores/models';
 	import { metricStore } from '$lib/stores/metrics';
 	import { generateLinearChart } from '$lib/chartFunctions';
@@ -15,15 +15,19 @@
 			});
 		}
 	}
+
+	onMount(() => {
+		if (mySvg) {
+			const svgWidth = mySvg.clientWidth;
+			const svgHeight = (svgWidth / 16) * 9;
+			mySvg.setAttribute('width', String(svgWidth));
+			mySvg.setAttribute('height', String(svgHeight));
+			mySvg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+		}
+	});
 </script>
 
-<svg
-	bind:this={mySvg}
-	class="chart"
-	class:chart-dark={$globalTheme !== 'white'}
-	width="900"
-	height="500"
-/>
+<svg bind:this={mySvg} class="chart" class:chart-dark={$globalTheme !== 'white'} />
 <div id="tooltip" style="position: absolute; visibility: hidden" />
 
 <style>
@@ -34,8 +38,7 @@
 		background: var(--cds-ui-background);
 		border-radius: 6px;
 		margin-top: 16px;
-		box-shadow: 0 -5px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
-			0 10px 15px -3px #0000000d;
+		width: 100%;
 	}
 
 	:global(.chart-dark) {
@@ -45,8 +48,6 @@
 		background: var(--cds-ui-background);
 		border-radius: 6px;
 		margin-top: 16px;
-		box-shadow: 0 -5px 10px -3px var(--cds-background-inverse);
-		/* 0 2px 0px -8px var(--cds-background-inverse), 0 8px 10px -5px var(--cds-background-inverse); */
 	}
 
 	:global(.chart-legend) {

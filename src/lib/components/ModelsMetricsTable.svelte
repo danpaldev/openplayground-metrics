@@ -41,9 +41,13 @@
 			return {
 				id,
 				model_name,
-				completion_response_time: `${averages.completion_time_avg.toFixed(3)} sec.`,
+				completion_response_time: averages.completion_time_avg
+					? `${averages.completion_time_avg.toFixed(3)} sec.`
+					: 'NaN',
 				tokens_per_second: `${Math.round(averages.token_second_avg)}`,
-				time_first_byte: `${Math.round(averages.first_byte_avg * 1000)} msec.`
+				time_first_byte: averages.first_byte_avg
+					? `${Math.round(averages.first_byte_avg * 1000)} msec.`
+					: 'NaN'
 			};
 		})}
 	/>
@@ -52,6 +56,7 @@
 <style>
 	.metrics-table-container {
 		margin-top: 3rem;
+		width: 95%;
 	}
 
 	p {
