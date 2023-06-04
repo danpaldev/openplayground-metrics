@@ -15,12 +15,26 @@ export const generateLinearChart = (
 
 	const parseTime = d3.timeParse('%Y-%m-%dT%H:%M:%S.%LZ');
 
-	const data = dataOriginal.map((d) => {
+	const data = dataOriginal.map((d, i, arr) => {
 		const epochToIso = new Date(parseInt(d.start_time) * 1000).toISOString();
+		let duration = d.completion_response_time;
+		let error = false;
+
+		if (duration === 0) {
+			error = true;
+			for (let j = i - 1; j >= 0; j--) {
+				if (arr[j].completion_response_time !== 0) {
+					duration = arr[j].completion_response_time;
+					break;
+				}
+			}
+		}
+
 		return {
 			...d,
 			timestamp: parseTime(epochToIso),
-			duration: d.completion_response_time
+			duration: duration,
+			error: error
 		};
 	});
 
@@ -136,7 +150,7 @@ export const generateLinearChart = (
 		.attr('transform', 'rotate(-90)')
 		.attr('y', margin.left - 40)
 		.attr('x', -height / 2)
-		.text('Duration');
+		.text('Completion Response Time (s)');
 
 	const models = d3.group(data, (d) => d.model);
 	const color = d3
@@ -174,20 +188,24 @@ export const generateLinearChart = (
 				.append('circle')
 				.attr('cx', x(d.timestamp))
 				.attr('cy', y(d.duration))
-				.attr('r', 6)
-				.style('opacity', 0)
+				.attr('r', 4)
+				.attr('fill', d.error ? 'red' : modelColor) // Set the circle color based on the error property
+				.style('opacity', d.error ? 1 : 0) // Set the opacity based on the error property
 				.on('mouseover', function (event) {
 					const [x, y] = d3.pointer(event);
+					const tooltipContent = d.error
+						? `<strong>Time (UTC):</strong><span>${tooltipValueFormatter(
+								d.timestamp
+						  )}</span><br><br><strong>Request Error</strong><br><br>`
+						: `<strong>Time (UTC):</strong></span> <span>${tooltipValueFormatter(
+								d.timestamp
+						  )}</span><br><br><strong>Duration:</strong><span>${d.duration} (s)</span>`;
 
 					d3.select('#tooltip')
 						.style('left', event.clientX + 10 + 'px')
 						.style('top', event.clientY - 10 + 'px')
 						.style('visibility', 'visible')
-						.html(
-							`<strong>Time (UTC):</strong> <span>${tooltipValueFormatter(
-								d.timestamp
-							)}</span><br><br><strong>Duration:</strong> <span>${d.duration} (s)</span>`
-						);
+						.html(tooltipContent);
 				})
 				.on('mouseout', function () {
 					d3.select('#tooltip').style('visibility', 'hidden');
