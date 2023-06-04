@@ -64,7 +64,6 @@
 		margin-left: 8px;
 		cursor: pointer;
 		display: flex;
-		/* border: 8px; */
 	}
 
 	.label-text-bold {
@@ -72,7 +71,6 @@
 		cursor: pointer;
 		display: flex;
 		font-weight: 800;
-		/* border: 8px; */
 	}
 
 	.hidden-checkbox {

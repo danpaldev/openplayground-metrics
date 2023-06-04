@@ -1,4 +1,5 @@
 import { MODELS_BY_PROVIDER } from '$lib/constants';
+import { PUBLIC_HOST_URL } from '$env/static/public';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const tooltipValueFormatter = (value: any): string => {
@@ -32,7 +33,7 @@ export const fetchMetricsForModel = async (
 	model: string,
 	timestamps: Timestamps
 ): Promise<MetricsResponseData> => {
-	const url = 'http://127.0.0.1:8000/metrics/'; // Replace with your URL
+	const url = `${PUBLIC_HOST_URL}/metrics/`; // Replace with your URL
 	const data = {
 		models: [model],
 		timestamps
@@ -61,7 +62,7 @@ export const fetchMetricsForProvider = async (
 	timestamps: Timestamps
 ): Promise<MetricsResponseData> => {
 	const target_models: string[] = MODELS_BY_PROVIDER[provider];
-	const url = 'http://127.0.0.1:8000/metrics/';
+	const url = `${PUBLIC_HOST_URL}/metrics/`;
 	const data = {
 		models: target_models,
 		timestamps
@@ -87,7 +88,7 @@ export const updateMetricsWithTimestamps = async (
 	models: string[],
 	timestamps: Timestamps
 ): Promise<MetricsResponseData> => {
-	const url = 'http://127.0.0.1:8000/metrics/';
+	const url = `${PUBLIC_HOST_URL}/metrics/`;
 	const data = {
 		models: models,
 		timestamps
