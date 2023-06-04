@@ -6,15 +6,20 @@
 	import { fetchMetricsForModel, fetchMetricsForProvider } from '$lib/utils';
 	import CustomCheckbox from './CustomCheckbox.svelte';
 
+	let loading: boolean;
+	let isProviderLoading: string[] = [];
+
 	const handleModelChange = async (e: Event) => {
 		let target = e.target as HTMLInputElement;
 		if (target.checked) {
 			try {
+				loading = true;
 				const metricsForModel = await fetchMetricsForModel(target.value, $timestampsStore);
 				metricStore.update((prevState) => ({
 					selectedModels: [...prevState.selectedModels, target.value],
 					metrics: [...prevState.metrics, ...metricsForModel.metrics]
 				}));
+				loading = false;
 			} catch (error) {
 				if (error instanceof Error) {
 					window.alert(`An error occurred: ${error.message}`);
@@ -35,6 +40,7 @@
 
 		if (target.checked) {
 			try {
+				isProviderLoading = [...isProviderLoading, target.value];
 				const metricsForProvider = await fetchMetricsForProvider(target.value, $timestampsStore);
 				metricStore.update((prevState) => ({
 					selectedModels: [...prevState.selectedModels, ...metricsForProvider.models],
@@ -43,6 +49,7 @@
 						...metricsForProvider.metrics
 					]
 				}));
+				isProviderLoading = isProviderLoading.filter((provider) => provider !== target.value);
 			} catch (error) {
 				if (error instanceof Error) {
 					window.alert(`An error occurred: ${error.message}`);
@@ -59,10 +66,6 @@
 			}));
 		}
 	};
-
-	$: {
-		console.log($selectedProviders);
-	}
 </script>
 
 <section class="checkbox-container">
@@ -74,6 +77,7 @@
 			checked={$selectedProviders.includes(PROVIDERS.OPEN_AI_ID)}
 			color={$selectedProviders.includes(PROVIDERS.OPEN_AI_ID) ? 'black' : ''}
 			bold={true}
+			loading={isProviderLoading.includes(PROVIDERS.OPEN_AI_ID)}
 		/>
 
 		<div class="models-checkbox-container">
@@ -85,6 +89,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
+						loading={false}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -93,6 +98,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
+						loading
 					/>
 				{/if}
 			{/each}
@@ -106,6 +112,7 @@
 			checked={$selectedProviders.includes(PROVIDERS.ANTHROPIC_ID)}
 			color={$selectedProviders.includes(PROVIDERS.ANTHROPIC_ID) ? 'black' : ''}
 			bold={true}
+			loading={isProviderLoading.includes(PROVIDERS.ANTHROPIC_ID)}
 		/>
 
 		<div class="models-checkbox-container">
@@ -117,6 +124,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
+						loading={false}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -125,6 +133,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
+						loading
 					/>
 				{/if}
 			{/each}
@@ -138,6 +147,7 @@
 			checked={$selectedProviders.includes(PROVIDERS.FOREFRONT_ID)}
 			color={$selectedProviders.includes(PROVIDERS.FOREFRONT_ID) ? 'black' : ''}
 			bold={true}
+			loading={isProviderLoading.includes(PROVIDERS.FOREFRONT_ID)}
 		/>
 		<div class="models-checkbox-container">
 			{#each MODELS_BY_PROVIDER[PROVIDERS.FOREFRONT_ID] as model}
@@ -148,6 +158,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
+						loading={false}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -156,6 +167,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
+						loading
 					/>
 				{/if}
 			{/each}
@@ -169,6 +181,7 @@
 			checked={$selectedProviders.includes(PROVIDERS.ALEPH_ALPHA_ID)}
 			color={$selectedProviders.includes(PROVIDERS.ALEPH_ALPHA_ID) ? 'black' : ''}
 			bold={true}
+			loading={isProviderLoading.includes(PROVIDERS.ALEPH_ALPHA_ID)}
 		/>
 		<div class="models-checkbox-container">
 			{#each MODELS_BY_PROVIDER[PROVIDERS.ALEPH_ALPHA_ID] as model}
@@ -179,6 +192,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
+						loading={false}
 					/>
 				{:else}
 					<CustomCheckbox
@@ -187,6 +201,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
+						loading
 					/>
 				{/if}
 			{/each}
