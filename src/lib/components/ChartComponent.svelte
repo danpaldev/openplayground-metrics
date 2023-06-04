@@ -2,7 +2,7 @@
 	import { tick } from 'svelte';
 	import { legendTracker } from '$lib/stores/models';
 	import { metricStore } from '$lib/stores/metrics';
-	import { generateLinearChart } from './chartFunctions';
+	import { generateLinearChart } from '$lib/chartFunctions';
 	import { globalTheme } from '$lib/stores/settings';
 
 	let mySvg: SVGSVGElement;
