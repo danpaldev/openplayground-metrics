@@ -118,12 +118,14 @@ interface MetricGroup {
 	completion_response_time: number;
 	average_token_second: number;
 	first_byte_elapsed_time: number;
+	completion_times: number[];
 }
 
 export interface MetricAverages {
 	completion_time_avg: number;
 	token_second_avg: number;
 	first_byte_avg: number;
+	completion_time_std: number;
 }
 
 export const calculateAveragesByModel = (metrics: Metric[]): Record<string, MetricAverages> => {
@@ -134,17 +136,19 @@ export const calculateAveragesByModel = (metrics: Metric[]): Record<string, Metr
 					count: 0,
 					completion_response_time: 0,
 					average_token_second: 0,
-					first_byte_elapsed_time: 0
+					first_byte_elapsed_time: 0,
+					//We need them again to get the STF afterwards
+					completion_times: []
 				};
 			}
 
-			//When a completion request fails, the "completion_response_time" will always be zero
-			//Therefore, in order to ignore those failed ones, we add this conditional
 			if (metric.completion_response_time > 0) {
 				acc[metric.model].count++;
 				acc[metric.model].completion_response_time += metric.completion_response_time;
 				acc[metric.model].average_token_second += metric.average_token_second;
 				acc[metric.model].first_byte_elapsed_time += metric.first_byte_elapsed_time;
+				// We add each completion time to the array again in order to get the STF afterwards
+				acc[metric.model].completion_times.push(metric.completion_response_time);
 			}
 
 			return acc;
@@ -155,11 +159,22 @@ export const calculateAveragesByModel = (metrics: Metric[]): Record<string, Metr
 	const averages: Record<string, MetricAverages> = {};
 
 	for (const model in groupedMetrics) {
+		const completion_time_avg =
+			groupedMetrics[model].completion_response_time / groupedMetrics[model].count;
+
+		//STD Calculation
+		const sumOfSquares = groupedMetrics[model].completion_times.reduce((sum, value) => {
+			const diff = value - completion_time_avg;
+			return sum + diff * diff;
+		}, 0);
+
+		const stdDev = Math.sqrt(sumOfSquares / groupedMetrics[model].count);
+
 		averages[model] = {
-			completion_time_avg:
-				groupedMetrics[model].completion_response_time / groupedMetrics[model].count,
+			completion_time_avg,
 			token_second_avg: groupedMetrics[model].average_token_second / groupedMetrics[model].count,
-			first_byte_avg: groupedMetrics[model].first_byte_elapsed_time / groupedMetrics[model].count
+			first_byte_avg: groupedMetrics[model].first_byte_elapsed_time / groupedMetrics[model].count,
+			completion_time_std: stdDev
 		};
 	}
 

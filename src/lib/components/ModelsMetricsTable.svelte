@@ -34,6 +34,7 @@
 		headers={[
 			{ key: 'model_name', value: 'Model' },
 			{ key: 'completion_response_time', value: 'Completion Response Time' },
+			{ key: 'completion_response_time_std', value: 'Completion Response Time STD' },
 			{ key: 'tokens_per_second', value: 'Tokens per Second' },
 			{ key: 'time_first_byte', value: 'Time To First Byte' }
 		]}
@@ -43,6 +44,9 @@
 				model_name,
 				completion_response_time: averages.completion_time_avg
 					? `${averages.completion_time_avg.toFixed(3)} sec.`
+					: 'NaN',
+				completion_response_time_std: averages.completion_time_std
+					? `${averages.completion_time_std.toFixed(3)} sec.`
 					: 'NaN',
 				tokens_per_second: `${Math.round(averages.token_second_avg)}`,
 				time_first_byte: averages.first_byte_avg
