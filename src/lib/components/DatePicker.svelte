@@ -1,60 +1,51 @@
 <script lang="ts">
 	import Flatpickr from 'svelte-flatpickr';
-	import type { HookProps } from 'svelte-flatpickr';
 	import { Button } from 'carbon-components-svelte';
 	import Calendar from 'carbon-icons-svelte/lib/Calendar.svelte';
 	import SendFilled from 'carbon-icons-svelte/lib/SendFilled.svelte';
 	import '$lib/components/flatpickr.css';
 	import { metricStore } from '$lib/stores/metrics';
 	import { timestampsStore } from '$lib/stores/timestamps';
-	import { updateMetricsWithTimestamps } from '$lib/utils';
+	import { updateMetricsWithTimestamps, getDefaultUtcTimes } from '$lib/utils';
 
 	let value: undefined | Date[] = undefined;
 	let formattedValue: string;
 	let flatpickr: { open: () => void; calendarContainer: { focus: () => void }; clear: () => void };
-
-	let mode = 'range';
+	let options: { [key: string]: string | string[] | boolean | ((...args: any[]) => void) };
 
 	//Used to prevent unnecesary network requests
 	let didTimestampChange = false;
 
-	//@ts-ignore
-	let options;
-
 	$: options = {
-		mode,
+		mode: 'range',
 		dateFormat: 'm-d-Y H:i',
-		minDate: '06-01-2023',
-		defaultDate: mode === 'single' ? '06-01-2023' : ['06-01-2023', '06-02-2023'],
+		minDate: '06-02-2023 03:05',
+		defaultDate: getDefaultUtcTimes(),
 		enableTime: true,
 		time_24hr: true,
-		//@ts-ignore
-		onChange(selectedDates, dateStr) {
-			console.log('flatpickr hook', selectedDates, dateStr);
-			const epochTimes = selectedDates.map((date: Date) => Math.floor(date.getTime() / 1000));
+		onChange(selectedDates: Array<Date>, dateStr: string) {
+			//With this, we make flatpickr to use the UTC timezone
+			const epochTimes = selectedDates.map((date: Date) => {
+				const timezoneOffset = date.getTimezoneOffset() * 60 * 1000;
+				const utcDate = new Date(date.getTime() - timezoneOffset);
+				return Math.floor(utcDate.getTime() / 1000);
+			});
+
 			const epochTimestamps = { start: epochTimes[0], end: epochTimes[1] };
 			timestampsStore.set(epochTimestamps);
+
+			//We make this true in order to allow fetch requests again
 			didTimestampChange = true;
-		},
-		onOpen() {
-			console.log('opened');
 		}
 	};
-	$: console.log(mode);
-	$: console.log({ value });
 
-	function handleOpen(event: CustomEvent<HookProps>) {
+	function handleOpen(event: MouseEvent) {
 		event.preventDefault();
 
 		if (flatpickr) {
 			flatpickr.open();
 			flatpickr.calendarContainer.focus();
 		}
-	}
-
-	function handleChange(event: CustomEvent<HookProps>) {
-		const [selectedDates, dateStr] = event.detail;
-		console.log({ selectedDates, dateStr });
 	}
 
 	function handleClear() {
@@ -107,7 +98,6 @@
 			{options}
 			bind:value
 			bind:formattedValue
-			on:change={handleChange}
 			name="date"
 			bind:flatpickr
 			on:close={() => {

@@ -4,7 +4,7 @@
 	export let data;
 	import DatePicker from '$lib/components/DatePicker.svelte';
 	import ChartComponent from '$lib/components/ChartComponent.svelte';
-	import ModelInfoList from '$lib/components/ModelInfoList.svelte';
+	import ModelsMetricsTable from '$lib/components/ModelsMetricsTable.svelte';
 	import ModelsCheckboxes from '$lib/components/ModelsCheckboxes.svelte';
 	import { ContentSwitcher, Switch } from 'carbon-components-svelte';
 	import { metricStore } from '$lib/stores/metrics';
@@ -37,31 +37,10 @@
 </script>
 
 <section>
-	<!-- <LineChartComponent /> -->
 	<DatePicker />
 	<ChartComponent />
 	<ModelsCheckboxes />
-	<!-- <div class="options-container">
-		<Dropdown
-			type="inline"
-			size="sm"
-			titleText="Graph by:"
-			bind:selectedId={graphType}
-			items={[
-				{ id: RESPONSE_TIME_ID, text: RESPONSE_TIME_TEXT },
-				{ id: RESPONSE_TIME_DUAL_ID, text: RESPONSE_TIME_DUAL_TEXT },
-				{ id: TOKENS_PER_SECOND_ID, text: TOKENS_PER_SECOND_TEXT }
-			]}
-		/>
-		<div class="custom-selection-button-container">
-			<Button kind="ghost">Custom Model Selection</Button>
-		</div>
-	</div> -->
-	<!-- {#each $selectedModels as model}
-		<h1>{model}</h1>
-	{/each} -->
-	<!-- <ModelInfoList bind:selectedProvider /> -->
-	<div />
+	<ModelsMetricsTable />
 </section>
 
 <style>

@@ -195,10 +195,10 @@ export const generateLinearChart = (
 		});
 
 		path
-			.on('mouseover', function (d) {
+			.on('mouseover', function () {
 				d3.select(event.target).transition().duration(200).attr('stroke-width', 5);
 			})
-			.on('mouseout', function (d) {
+			.on('mouseout', function () {
 				d3.select(event.target).transition().duration(200).attr('stroke-width', 3.5);
 			});
 	});
