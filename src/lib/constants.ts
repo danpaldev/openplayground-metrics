@@ -1,15 +1,3 @@
-//Dropdowns constants
-export const ALL_MODELS_ID = 'all_models';
-export const ALL_MODELS_TEXT = 'All Models';
-export const BY_PROVIDER_ID = 'by_provider';
-export const BY_PROVIDER_TEXT = 'By Provider';
-export const RESPONSE_TIME_ID = 'response_time';
-export const RESPONSE_TIME_TEXT = 'Response Time';
-export const RESPONSE_TIME_DUAL_ID = 'response_time_dual_y';
-export const RESPONSE_TIME_DUAL_TEXT = 'Response Time (Dual Y Axis)';
-export const TOKENS_PER_SECOND_ID = 'tokens_per_second';
-export const TOKENS_PER_SECOND_TEXT = 'Tokens/Second';
-
 //Providers constants
 export const PROVIDERS = {
 	OPEN_AI_ID: 'openai',
@@ -21,35 +9,6 @@ export const PROVIDERS = {
 	FOREFRONT_ID: 'forefront',
 	FOREFRONT_TEXT: 'Forefront'
 };
-
-export const PROVIDERS_INDEXES = new Map([
-	[0, PROVIDERS.OPEN_AI_ID],
-	[1, PROVIDERS.ANTHROPIC_ID]
-]);
-
-export const second_try = new Map([
-	[
-		0,
-		{
-			provider_id: 'open_ai',
-			provider_name: 'OpenAI'
-		}
-	],
-	[
-		1,
-		{
-			provider_id: 'anthropic',
-			provider_name: 'Anthropic'
-		}
-	],
-	[
-		2,
-		{
-			provider_id: 'others',
-			provider_name: 'Others'
-		}
-	]
-]);
 
 export const MODELS_BY_PROVIDER = {
 	[PROVIDERS.OPEN_AI_ID]: [

@@ -5,6 +5,7 @@
 		HeaderNavItem,
 		HeaderUtilities,
 		HeaderGlobalAction,
+		HeaderActionLink,
 		SkipToContent
 	} from 'carbon-components-svelte';
 	import 'carbon-components-svelte/css/all.css';
@@ -35,8 +36,18 @@
 	</HeaderNav>
 	<HeaderUtilities>
 		<Theme bind:theme />
-		<HeaderGlobalAction aria-label="Discord Icon" icon={DiscordIcon} />
-		<HeaderGlobalAction aria-label="Github Icon" icon={GithubIcon} />
+		<HeaderActionLink
+			target="_blank"
+			href="https://discord.com/invite/JAdwnWKMth"
+			aria-label="Discord Icon"
+			icon={DiscordIcon}
+		/>
+		<HeaderActionLink
+			target="_blank"
+			href="https://github.com/nat/openplayground"
+			aria-label="Github Icon"
+			icon={GithubIcon}
+		/>
 		<HeaderGlobalAction
 			aria-label="Global Theme Icon"
 			icon={theme === 'white' ? DarkModeIcon : LightModeIcon}
