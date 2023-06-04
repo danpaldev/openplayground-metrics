@@ -156,9 +156,9 @@ export const generateLinearChart = (
 	const color = d3
 		.scaleOrdinal()
 		.range([...d3.schemeTableau10, ...d3.schemeSet3, ...d3.schemePastel1]);
-	const colorMap: {
-		[key: string]: string;
-	} = {};
+	// const colorMap: {
+	// 	[key: string]: string;
+	// } = {};
 
 	plottedDataGroup.selectAll('path').remove();
 	plottedDataGroup.selectAll('circle').remove();
@@ -166,13 +166,10 @@ export const generateLinearChart = (
 	models.forEach((values, modelName) => {
 		let modelColor;
 
-		if (legendTracker.get(modelName)) {
-			color(modelName);
+		if (legendTracker.has(modelName)) {
 			modelColor = legendTracker.get(modelName);
 		} else {
 			modelColor = color(`${modelName}${Math.random}`);
-			legendTracker.set(modelName, modelColor);
-			colorMap[modelName] = modelColor;
 		}
 
 		const path = plottedDataGroup
@@ -224,5 +221,5 @@ export const generateLinearChart = (
 			});
 	});
 
-	return colorMap;
+	// return colorMap;
 };

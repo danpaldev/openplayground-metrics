@@ -6,21 +6,12 @@
 	import { globalTheme } from '$lib/stores/settings';
 
 	let mySvg: SVGSVGElement;
-	/*
-	//We have to create a "local" copy of the legendTracker's store content
-	to prevent an infinite loop on the reactive block!
-	*/
-	let legendColors: Map<string, string> = $legendTracker;
 
 	$: {
 		const data = $metricStore.metrics;
 		if (mySvg) {
 			tick().then(() => {
-				let newLegendData = generateLinearChart(mySvg, data, legendColors);
-
-				for (const [key, value] of Object.entries(newLegendData)) {
-					legendTracker.update((prevMap) => prevMap.set(key, value));
-				}
+				generateLinearChart(mySvg, data, $legendTracker);
 			});
 		}
 	}

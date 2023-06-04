@@ -1,4 +1,4 @@
-import { MODELS_BY_PROVIDER } from '$lib/constants';
+import { MODELS_BY_PROVIDER, COLOR_PALETTE, PROVIDERS } from '$lib/constants';
 import { PUBLIC_HOST_URL } from '$env/static/public';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -219,4 +219,19 @@ export const epochToFormattedDate = (epoch: number | undefined) => {
 		('0' + date.getUTCMinutes()).slice(-2);
 
 	return dateString;
+};
+
+export const mapColorToModels = (): Map<string, string> => {
+	let models: string[] = [];
+	for (const [_, value] of Object.entries(MODELS_BY_PROVIDER)) {
+		models = [...models, ...value];
+	}
+
+	const result: [string, string][] = models.map((model) => [
+		model,
+		COLOR_PALETTE.shift() as string
+	]);
+	const map: Map<string, string> = new Map(result);
+	console.log(map);
+	return map;
 };

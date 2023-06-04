@@ -1,6 +1,5 @@
-import { writable, type Writable } from 'svelte/store';
+import { writable, readable, type Readable } from 'svelte/store';
+import { mapColorToModels } from '$lib/utils';
 
-// export const selectedModels = writable(['gpt-4', 'gpt-3.5-turbo', 'claude-v1']);
-export const selectedModels = writable([]);
-export const legendTracker: Writable<Map<string, string>> = writable(new Map([['', '']]));
+export const legendTracker: Readable<Map<string, string>> = readable(mapColorToModels());
 export const selectedProviders = writable(['']);
