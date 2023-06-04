@@ -3,7 +3,7 @@
 	import { Button } from 'carbon-components-svelte';
 	import Calendar from 'carbon-icons-svelte/lib/Calendar.svelte';
 	import SendFilled from 'carbon-icons-svelte/lib/SendFilled.svelte';
-	import '$lib/components/flatpickr.css';
+	import '$lib/flatpickr.css';
 	import { metricStore } from '$lib/stores/metrics';
 	import { timestampsStore } from '$lib/stores/timestamps';
 	import { updateMetricsWithTimestamps, getDefaultUtcTimes } from '$lib/utils';

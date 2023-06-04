@@ -296,6 +296,11 @@
 	border-bottom: 4px solid rgba(57, 57, 57, 0.6);
 	top: 26%;
 }
+
+.numInput.cur-year + .arrowUp {
+	margin-left: 20px;
+}
+
 .numInputWrapper span.arrowDown {
 	top: 50%;
 }
@@ -355,6 +360,9 @@
 }
 .flatpickr-current-month .numInputWrapper span.arrowUp:after {
 	border-bottom-color: rgba(0, 0, 0, 0.9);
+}
+.flatpickr-current-month .numInputWrapper span.arrowDown {
+	margin-left: 20px;
 }
 .flatpickr-current-month .numInputWrapper span.arrowDown:after {
 	border-top-color: rgba(0, 0, 0, 0.9);
