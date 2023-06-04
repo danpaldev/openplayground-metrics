@@ -81,3 +81,8 @@ export const MODELS_BY_PROVIDER = {
 		'gpt-neox-20b-vanilla'
 	]
 };
+
+export const LEGENDS = {
+	DEFAULT_TABLE_LEGEND:
+		'All metrics in the table represent averages, calculated using metrics from the past 12 hours.'
+};

@@ -198,3 +198,24 @@ export const getDefaultUtcTimes = (): Array<string> => {
 
 	return [utcStringMinus12, utcString];
 };
+
+// Convert an epoch timestamp to a formatted string
+export const epochToFormattedDate = (epoch: number | undefined) => {
+	if (epoch === undefined) {
+		throw new Error('Epoch timestamp is undefined');
+	}
+	const date = new Date(epoch * 1000); // JavaScript uses milliseconds
+
+	const dateString =
+		('0' + (date.getUTCMonth() + 1)).slice(-2) +
+		'-' + // Months are 0 based
+		('0' + date.getUTCDate()).slice(-2) +
+		'-' +
+		date.getUTCFullYear() +
+		' ' +
+		('0' + date.getUTCHours()).slice(-2) +
+		':' +
+		('0' + date.getUTCMinutes()).slice(-2);
+
+	return dateString;
+};

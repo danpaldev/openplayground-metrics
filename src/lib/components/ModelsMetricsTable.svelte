@@ -1,25 +1,29 @@
 <script lang="ts">
 	import { DataTable } from 'carbon-components-svelte';
+	import { onDestroy } from 'svelte';
 	import { metricStore } from '$lib/stores/metrics';
 	import { timestampsStore } from '$lib/stores/timestamps';
-	import { calculateAveragesByModel, type MetricAverages } from '$lib/utils';
+	import { calculateAveragesByModel, epochToFormattedDate, type MetricAverages } from '$lib/utils';
+	import { LEGENDS } from '$lib/constants';
 
 	let averagesResults: Record<string, MetricAverages>;
-	let tableLegend: string;
+	let tableLegend = LEGENDS.DEFAULT_TABLE_LEGEND;
 
 	$: {
 		const data = $metricStore;
 		averagesResults = calculateAveragesByModel(data.metrics);
 	}
 
-	$: {
+	const unsubscribe = metricStore.subscribe((_) => {
 		if ($timestampsStore) {
-			tableLegend = 'Dummy label';
-		} else {
-			tableLegend =
-				'All metrics in the table represent averages, calculated using metrics from the past 12 hours.';
+			console.log($timestampsStore);
+			tableLegend = `All metrics in the table represent averages, calculated using metrics from ${epochToFormattedDate(
+				$timestampsStore.start
+			)} to ${epochToFormattedDate($timestampsStore.end)} (UTC) `;
 		}
-	}
+	});
+
+	onDestroy(unsubscribe);
 </script>
 
 <div class="metrics-table-container">
