@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { tick } from 'svelte';
 	import { legendTracker } from '$lib/stores/models';
 	import { metricStore } from '$lib/stores/metrics';
 	import { generateLinearChart } from './chartFunctions';
@@ -7,7 +7,7 @@
 
 	let mySvg: SVGSVGElement;
 	/*
-	//We have to create a "local" copy of the legendTracker store's content
+	//We have to create a "local" copy of the legendTracker's store content
 	to prevent an infinite loop on the reactive block!
 	*/
 	let legendColors: Map<string, string> = $legendTracker;
@@ -36,16 +36,11 @@
 <div id="tooltip" style="position: absolute; visibility: hidden" />
 
 <style>
-	/* :global(.checkbox-provider > *) {
-		font-weight: 600;
-	} */
 	:global(.chart) {
 		padding-left: 0.7rem;
 		display: block;
 		margin: auto;
 		background: #fff;
-		/* background: red; */
-		/* border: 1px solid hsl(214, 50%, 88%); */
 		border-radius: 6px;
 		margin-top: 16px;
 		box-shadow: 0 -5px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
@@ -57,7 +52,6 @@
 		display: block;
 		margin: auto;
 		background: var(--cds-ui-background);
-		/* border: 1px solid var(--cds-background-inverse); */
 		border-radius: 6px;
 		margin-top: 16px;
 		box-shadow: 0 -5px 10px -3px var(--cds-background-inverse);
@@ -65,9 +59,7 @@
 	}
 
 	:global(.chart-legend) {
-		/* font-weight: 800; */
 		fill: var(--cds-text-primary);
-		/* fill: red; */
 	}
 
 	:global(.x-axis-label) {
@@ -80,23 +72,14 @@
 		color: var(--cds-text-primary);
 	}
 
-	/* --cds-text-primary */
-
 	:global(.y-axis-label .domain) {
-		/* stroke: rgb(204, 204, 204); */
 		stroke: var(--cds-text-secondary);
-		/* stroke-width: 2; */
 	}
-
-	/* :global(.chart-line) {
-		stroke-width: 3px;
-	} */
 
 	:global(#tooltip) {
 		font-size: 0.9rem;
-		/* font-weight: 100; */
-		/* color: rgba(0, 0, 0, 1); */
-		background: white;
+		background: var(--cds-ui-02);
+		color: var(--cds-text-primary);
 		min-height: 1rem;
 		max-height: 7rem;
 		min-width: 1rem;
@@ -107,20 +90,17 @@
 			0 10px 15px -3px #0000000d;
 	}
 
-	/* :global(#tooltip *) {
-		font-family: 'IBM Plex Sans Condensed', sans-serif;
-		/* font-weight: 100; */
-	/* padding: 3px; */
-	/* } */
-
-	:global(#tooltip strong) {
+	:global(#tooltip p) {
 		display: inline-block; /* Allows the border to match the width of the text */
 		border-bottom: 1px solid gray;
+		font-weight: 400;
+		font-size: 0.9rem;
 		width: 100%;
 		max-width: 100%;
 	}
 
 	:global(#tooltip span) {
 		padding: 3px;
+		font-size: 0.9rem;
 	}
 </style>

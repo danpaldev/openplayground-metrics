@@ -193,13 +193,16 @@ export const generateLinearChart = (
 				.style('opacity', d.error ? 1 : 0) // Set the opacity based on the error property
 				.on('mouseover', function (event) {
 					const [x, y] = d3.pointer(event);
-					const tooltipContent = d.error
-						? `<strong>Time (UTC):</strong><span>${tooltipValueFormatter(
-								d.timestamp
-						  )}</span><br><br><strong>Request Error</strong><br><br>`
-						: `<strong>Time (UTC):</strong></span> <span>${tooltipValueFormatter(
-								d.timestamp
-						  )}</span><br><br><strong>Duration:</strong><span>${d.duration} (s)</span>`;
+
+					const errorTooltip = `<p>Time (UTC):</p><span>${tooltipValueFormatter(
+						d.timestamp
+					)}</span><br><br><div>Request Error</div><br>`;
+
+					const normalTooltip = `<p>Time (UTC):</p></span> <span>${tooltipValueFormatter(
+						d.timestamp
+					)}</span><br><br><p>Response Time(s):</p><span>${d.duration.toFixed(2)} (s)</span>`;
+
+					const tooltipContent = d.error ? errorTooltip : normalTooltip;
 
 					d3.select('#tooltip')
 						.style('left', event.clientX + 10 + 'px')
