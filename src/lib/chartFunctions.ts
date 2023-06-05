@@ -19,26 +19,11 @@ export const generateLinearChart = (
 
 	const parseTime = d3.timeParse('%Y-%m-%dT%H:%M:%S.%LZ');
 
-	const data = dataOriginal.map((d, i, arr) => {
+	const data = dataOriginal.map((d) => {
 		const epochToIso = new Date(d.start_time * 1000).toISOString();
-		let duration = d.completion_response_time;
-		let error = false;
-
-		if (duration === 0) {
-			error = true;
-			for (let j = i - 1; j >= 0; j--) {
-				if (arr[j].completion_response_time !== 0) {
-					duration = arr[j].completion_response_time;
-					break;
-				}
-			}
-		}
-
 		return {
 			...d,
-			timestamp: parseTime(epochToIso),
-			duration: duration,
-			error: error
+			timestamp: parseTime(epochToIso)
 		};
 	});
 
@@ -186,9 +171,33 @@ export const generateLinearChart = (
 		const modelColor: string =
 			legendTracker.get(modelName) || (color(`${modelName}${Math.random()}`) as string);
 
-		//This is just to prevent any null values being passed to `path`
-		//Again, just to make TS happy
-		const validValues = values.filter((d) => d.timestamp !== null) as DataPoint[];
+		/*
+			This is intended to handle the "failed metrics" in our dataset.
+			A failed metric will have a "duration" (completion response time) of 0.
+			Originally this was handled at the beginning of the file, but there was 
+			a bug where lines were "polluting" other models' lines.
+
+			As a plus, it makes Typescript happy because we are safely handling every value
+		*/
+		const validValues = values.map((d, i, arr) => {
+			let duration = d.completion_response_time;
+			let error = false;
+
+			if (duration === 0) {
+				error = true;
+				for (let j = i - 1; j >= 0; j--) {
+					if (arr[j].completion_response_time !== 0) {
+						duration = arr[j].completion_response_time;
+						break;
+					}
+				}
+			}
+			return {
+				...d,
+				duration: duration,
+				error: error
+			};
+		}) as DataPoint[];
 
 		const path = plottedDataGroup
 			.append('path')

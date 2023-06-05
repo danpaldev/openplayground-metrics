@@ -200,7 +200,7 @@ export const epochToFormattedDate = (epoch: number | undefined) => {
 
 export const mapColorToModels = (): Map<string, string> => {
 	let models: string[] = [];
-	for (const [_, value] of Object.entries(MODELS_BY_PROVIDER)) {
+	for (const [, value] of Object.entries(MODELS_BY_PROVIDER)) {
 		models = [...models, ...value];
 	}
 

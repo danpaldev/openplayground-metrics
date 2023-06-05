@@ -12,6 +12,12 @@
 				$metricStore.selectedModels,
 				$timestampsStore
 			);
+			/*
+				Sort the metrics by timestamp before applying them to the store.
+				This fixes a bug where conflicting timestamps mess up with d3.js lines
+			 */
+			results.metrics.sort((a, b) => a.start_time - b.start_time);
+
 			metricStore.set({
 				selectedModels: results.models,
 				metrics: results.metrics
