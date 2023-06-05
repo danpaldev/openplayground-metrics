@@ -1,8 +1,7 @@
-import { MODELS_BY_PROVIDER, COLOR_PALETTE, PROVIDERS } from '$lib/constants';
+import { MODELS_BY_PROVIDER, COLOR_PALETTE } from '$lib/constants';
 import { PUBLIC_HOST_URL } from '$env/static/public';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const tooltipValueFormatter = (value: any): string => {
+export const tooltipValueFormatter = (value: string): string => {
 	const hourRegex = /\b\d{1,2}:\d{2}:\d{2}\b/;
 	const hourString = String(value).match(hourRegex);
 
@@ -53,7 +52,6 @@ export const fetchMetricsForModel = async (
 
 	const metrics = await response.json();
 
-	// console.log(metrics);
 	return metrics;
 };
 
@@ -80,7 +78,6 @@ export const fetchMetricsForProvider = async (
 
 	const metrics = await response.json();
 
-	// console.log(metrics);
 	return metrics;
 };
 
@@ -108,7 +105,6 @@ export const updateMetricsWithTimestamps = async (
 
 	const metrics = await response.json();
 
-	// console.log(metrics);
 	return metrics;
 };
 
@@ -181,41 +177,7 @@ export const calculateAveragesByModel = (metrics: Metric[]): Record<string, Metr
 	return averages;
 };
 
-/*
-	Get the range of Dates in the next format ['Timestamp 12 hours ago','Timestamp Now']
-	We use a 12 hour range because the backend by default returns metrics for latest 12 hrs.
-*/
-export const getDefaultUtcTimes = (): Array<string> => {
-	const currentUtcTime = new Date();
-
-	const utcString =
-		('0' + (currentUtcTime.getUTCMonth() + 1)).slice(-2) +
-		'-' + // Months are 0 based
-		('0' + currentUtcTime.getUTCDate()).slice(-2) +
-		'-' +
-		currentUtcTime.getUTCFullYear() +
-		' ' +
-		('0' + currentUtcTime.getUTCHours()).slice(-2) +
-		':' +
-		('0' + currentUtcTime.getUTCMinutes()).slice(-2);
-
-	currentUtcTime.setUTCHours(currentUtcTime.getUTCHours() - 12);
-
-	const utcStringMinus12 =
-		('0' + (currentUtcTime.getUTCMonth() + 1)).slice(-2) +
-		'-' + // Months are 0 based
-		('0' + currentUtcTime.getUTCDate()).slice(-2) +
-		'-' +
-		currentUtcTime.getUTCFullYear() +
-		' ' +
-		('0' + currentUtcTime.getUTCHours()).slice(-2) +
-		':' +
-		('0' + currentUtcTime.getUTCMinutes()).slice(-2);
-
-	return [utcStringMinus12, utcString];
-};
-
-// Convert an epoch timestamp to a formatted string
+// Convert an epoch timestamp to a formatted string: 06-04-2023 02:06
 export const epochToFormattedDate = (epoch: number | undefined) => {
 	if (epoch === undefined) {
 		throw new Error('Epoch timestamp is undefined');
@@ -247,6 +209,5 @@ export const mapColorToModels = (): Map<string, string> => {
 		COLOR_PALETTE.shift() as string
 	]);
 	const map: Map<string, string> = new Map(result);
-	console.log(map);
 	return map;
 };

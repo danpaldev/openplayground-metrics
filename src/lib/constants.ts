@@ -78,3 +78,11 @@ export const COLOR_PALETTE: string[] = [
 	'#e5c494',
 	'#b3b3b3'
 ];
+
+export const TIME_RANGES = {
+	ONE_HOUR: '1h',
+	TWELVE_HOURS: '12h',
+	ONE_DAY: '1d',
+	ONE_WEEK: '1w',
+	FOUR_WEEKS: '4w'
+};
