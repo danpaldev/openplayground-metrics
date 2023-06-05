@@ -38,9 +38,11 @@ export const generateLinearChart = (
 		.domain(extent[0] === undefined ? defaultExtent : extent)
 		.range([margin.left, width - margin.right]);
 
+	const maxCompletionResponseTime = d3.max(data, (d) => d.completion_response_time) || 150;
+
 	const y = d3
 		.scaleLinear()
-		.domain([0, 150])
+		.domain([0, maxCompletionResponseTime])
 		.range([height - margin.bottom, margin.top]);
 
 	/*
