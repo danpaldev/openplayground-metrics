@@ -82,7 +82,9 @@
 				arrive (<strong>First Byte Token</strong>).<br /><br /> And finally, after the request is
 				done, we count the number of tokens received during the whole completion, and divide the
 				number by the amount of seconds that the completion took to finalize (completion response
-				time). This allows us to get the average number of <strong>Tokens per Second</strong>.
+				time). This allows us to get the average number of <strong>Tokens per Second</strong>. By
+				other hand, if the request for any model fails, this one will be registered with a 0
+				completion response time and it will be plotted as a red dot in the graph.
 			</AccordionItem>
 		</Accordion>
 	</div>
