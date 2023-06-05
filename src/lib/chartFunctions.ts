@@ -1,22 +1,26 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-nocheck
 import * as d3 from 'd3';
-import { tooltipValueFormatter } from '$lib/utils.js';
+import { tooltipValueFormatter, type Metric } from '$lib/utils.js';
+
+interface DataPoint extends Metric {
+	timestamp: Date;
+	duration: number;
+	error: boolean;
+}
 
 export const generateLinearChart = (
 	targetElement: SVGSVGElement,
-	dataOriginal: unknown,
+	dataOriginal: Metric[],
 	legendTracker: Map<string, string>
 ) => {
 	const chart = d3.select(targetElement);
 	const margin = { top: 20, right: 30, bottom: 50, left: 70 };
-	const width = chart.attr('width') - margin.left - margin.right;
-	const height = chart.attr('height') - margin.top - margin.bottom;
+	const width = +chart.attr('width') - margin.left - margin.right;
+	const height = +chart.attr('height') - margin.top - margin.bottom;
 
 	const parseTime = d3.timeParse('%Y-%m-%dT%H:%M:%S.%LZ');
 
 	const data = dataOriginal.map((d, i, arr) => {
-		const epochToIso = new Date(parseInt(d.start_time) * 1000).toISOString();
+		const epochToIso = new Date(d.start_time * 1000).toISOString();
 		let duration = d.completion_response_time;
 		let error = false;
 
@@ -38,9 +42,15 @@ export const generateLinearChart = (
 		};
 	});
 
+	//Defining a default extent of time for the X axis, just to make Typescript stop whining
+	const now = new Date();
+	const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+	//This is what I really care for, my data
+	const extent = d3.extent(data, (d) => d.timestamp);
+	const defaultExtent = [twelveHoursAgo, now];
 	const x = d3
 		.scaleTime()
-		.domain(d3.extent(data, (d) => d.timestamp))
+		.domain(extent[0] === undefined ? defaultExtent : extent)
 		.range([margin.left, width - margin.right]);
 
 	const y = d3
@@ -48,8 +58,13 @@ export const generateLinearChart = (
 		.domain([0, 150])
 		.range([height - margin.bottom, margin.top]);
 
+	/*
+		As we created a "copy" of the Data Object, and added a few 
+		extra properties (see const data = dataOriginal above L:22 ),
+		we are dealing with a new type!
+	*/
 	const line = d3
-		.line()
+		.line<DataPoint>()
 		.x((d) => x(d.timestamp))
 		.y((d) => y(d.duration));
 
@@ -115,7 +130,7 @@ export const generateLinearChart = (
 
 	// Add the Y Axis (Updating existing elements instead of generating them again!!)
 	const yAxisElement = yAxisGroup
-		.selectAll('.y-axis-label')
+		.selectAll<SVGGElement, undefined>('.y-axis-label')
 		.data([null])
 		.join('g')
 		.attr('transform', `translate(${margin.left}, 0)`)
@@ -124,7 +139,7 @@ export const generateLinearChart = (
 
 	yAxisElement
 		.selectAll('.tick line')
-		.data(y.ticks(), (d) => d)
+		.data(y.ticks())
 		.join('line')
 		.attr('stroke-opacity', 0.2)
 		.attr('x2', width)
@@ -153,34 +168,37 @@ export const generateLinearChart = (
 		.text('Completion Response Time (s)');
 
 	const models = d3.group(data, (d) => d.model);
+
+	/*
+		This is d3.js way for getting nice colors for your lines, 
+		but as you can seeon the .forEach below ("modelColor"),
+		we get the color from an already defined map, so we just use 
+		this as a fallback that makes Typescript happy
+	*/
 	const color = d3
 		.scaleOrdinal()
 		.range([...d3.schemeTableau10, ...d3.schemeSet3, ...d3.schemePastel1]);
-	// const colorMap: {
-	// 	[key: string]: string;
-	// } = {};
 
 	plottedDataGroup.selectAll('path').remove();
 	plottedDataGroup.selectAll('circle').remove();
 
 	models.forEach((values, modelName) => {
-		let modelColor;
+		const modelColor: string =
+			legendTracker.get(modelName) || (color(`${modelName}${Math.random()}`) as string);
 
-		if (legendTracker.has(modelName)) {
-			modelColor = legendTracker.get(modelName);
-		} else {
-			modelColor = color(`${modelName}${Math.random}`);
-		}
+		//This is just to prevent any null values being passed to `path`
+		//Again, just to make TS happy
+		const validValues = values.filter((d) => d.timestamp !== null) as DataPoint[];
 
 		const path = plottedDataGroup
 			.append('path')
-			.datum(values)
+			.datum(validValues)
 			.attr('fill', 'none')
 			.attr('stroke', modelColor)
 			.attr('stroke-width', 3.5)
-			.attr('d', line);
+			.attr('d', (d) => line(d));
 
-		values.forEach((d) => {
+		validValues.forEach((d) => {
 			plottedDataGroup
 				.append('circle')
 				.attr('cx', x(d.timestamp))
@@ -189,14 +207,14 @@ export const generateLinearChart = (
 				.attr('fill', d.error ? 'red' : modelColor) // Set the circle color based on the error property
 				.style('opacity', d.error ? 1 : 0) // Set the opacity based on the error property
 				.on('mouseover', function (event) {
-					const [x, y] = d3.pointer(event);
+					const [,] = d3.pointer(event);
 
 					const errorTooltip = `<p>Time (UTC):</p><span>${tooltipValueFormatter(
-						d.timestamp
+						d.timestamp.toString()
 					)}</span><br><br><div>Request Error</div><br>`;
 
 					const normalTooltip = `<p>Time (UTC):</p></span> <span>${tooltipValueFormatter(
-						d.timestamp
+						d.timestamp.toString()
 					)}</span><br><br><p>Response Time(s):</p><span>${d.duration.toFixed(2)} (s)</span>`;
 
 					const tooltipContent = d.error ? errorTooltip : normalTooltip;
@@ -214,12 +232,10 @@ export const generateLinearChart = (
 
 		path
 			.on('mouseover', function () {
-				d3.select(event.target).transition().duration(200).attr('stroke-width', 5);
+				d3.select(this).transition().duration(200).attr('stroke-width', 5);
 			})
 			.on('mouseout', function () {
-				d3.select(event.target).transition().duration(200).attr('stroke-width', 3.5);
+				d3.select(this).transition().duration(200).attr('stroke-width', 3.5);
 			});
 	});
-
-	// return colorMap;
 };
