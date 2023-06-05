@@ -42,7 +42,7 @@ export const generateLinearChart = (
 
 	const y = d3
 		.scaleLinear()
-		.domain([0, maxCompletionResponseTime])
+		.domain([0, maxCompletionResponseTime * 1.1])
 		.range([height - margin.bottom, margin.top]);
 
 	/*
