@@ -1,30 +1,47 @@
 <script lang="ts">
 	import { PROVIDERS, MODELS_BY_PROVIDER } from '$lib/constants';
-	import { legendTracker, selectedProviders } from '$lib/stores/models';
+	import { legendTracker } from '$lib/stores/models';
 	import { metricStore } from '$lib/stores/metrics';
 	import { timestampsStore } from '$lib/stores/timestamps';
 	import { fetchMetricsForModel, fetchMetricsForProvider } from '$lib/utils';
 	import CustomCheckbox from './CustomCheckbox.svelte';
+	import { ToastNotification } from 'carbon-components-svelte';
 
-	let loading: boolean;
+	let isModelLoading: string[] = [];
 	let isProviderLoading: string[] = [];
+
+	let selectedProviders: string[] = [];
+
+	let fetchError = false;
+	let errorMessage = '';
 
 	const handleModelChange = async (e: Event) => {
 		let target = e.target as HTMLInputElement;
 		if (target.checked) {
 			try {
-				loading = true;
+				isModelLoading = [...isModelLoading, target.value];
+				fetchError = false;
 				const metricsForModel = await fetchMetricsForModel(target.value, $timestampsStore);
 				metricStore.update((prevState) => ({
 					selectedModels: [...prevState.selectedModels, target.value],
 					metrics: [...prevState.metrics, ...metricsForModel.metrics]
 				}));
-				loading = false;
-			} catch (error) {
-				if (error instanceof Error) {
-					window.alert(`An error occurred: ${error.message}`);
+				isModelLoading = isModelLoading.filter((provider) => provider !== target.value);
+			} catch (err) {
+				//We deactivate the spinner for that specific checkbox
+				isModelLoading = isModelLoading.filter((provider) => provider !== target.value);
+				//We clean the metricStore in order to trigger the "un-checking" of the failed checkbox.
+				metricStore.update((prevState) => ({
+					selectedModels: prevState.selectedModels.filter((model) => model !== target.value),
+					metrics: prevState.metrics
+				}));
+
+				if (err instanceof Error) {
+					errorMessage = `An error occurred: ${err.message}`;
+					fetchError = true;
 				} else {
-					window.alert(`An unexpected error occurred: ${error}`);
+					errorMessage = `An unexpected error occurred: ${err}`;
+					fetchError = true;
 				}
 			}
 		} else {
@@ -40,7 +57,10 @@
 
 		if (target.checked) {
 			try {
+				selectedProviders = [...selectedProviders, target.value];
 				isProviderLoading = [...isProviderLoading, target.value];
+				fetchError = false;
+
 				const metricsForProvider = await fetchMetricsForProvider(target.value, $timestampsStore);
 				metricStore.update((prevState) => ({
 					selectedModels: [...prevState.selectedModels, ...metricsForProvider.models],
@@ -50,11 +70,18 @@
 					]
 				}));
 				isProviderLoading = isProviderLoading.filter((provider) => provider !== target.value);
-			} catch (error) {
-				if (error instanceof Error) {
-					window.alert(`An error occurred: ${error.message}`);
+			} catch (err) {
+				//We deactivate the spinner for that specific checkbox
+				isProviderLoading = isProviderLoading.filter((provider) => provider !== target.value);
+				//We clean the selectedProviders in order to trigger the "un-checking" of the failed checkbox.
+				selectedProviders = selectedProviders.filter((provider) => provider !== target.value);
+
+				if (err instanceof Error) {
+					errorMessage = `An error occurred: ${err.message}`;
+					fetchError = true;
 				} else {
-					window.alert(`An unexpected error occurred: ${error}`);
+					errorMessage = `An unexpected error occurred: ${err}`;
+					fetchError = true;
 				}
 			}
 		} else {
@@ -74,8 +101,7 @@
 			handleChange={handleProviderChange}
 			label={PROVIDERS.OPEN_AI_TEXT}
 			value={PROVIDERS.OPEN_AI_ID}
-			checked={$selectedProviders.includes(PROVIDERS.OPEN_AI_ID)}
-			color={$selectedProviders.includes(PROVIDERS.OPEN_AI_ID) ? 'black' : ''}
+			checked={selectedProviders.includes(PROVIDERS.OPEN_AI_ID)}
 			bold={true}
 			loading={isProviderLoading.includes(PROVIDERS.OPEN_AI_ID)}
 		/>
@@ -98,7 +124,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
-						loading
+						loading={isModelLoading.includes(model)}
 					/>
 				{/if}
 			{/each}
@@ -109,8 +135,7 @@
 			handleChange={handleProviderChange}
 			label={PROVIDERS.ANTHROPIC_TEXT}
 			value={PROVIDERS.ANTHROPIC_ID}
-			checked={$selectedProviders.includes(PROVIDERS.ANTHROPIC_ID)}
-			color={$selectedProviders.includes(PROVIDERS.ANTHROPIC_ID) ? 'black' : ''}
+			checked={selectedProviders.includes(PROVIDERS.ANTHROPIC_ID)}
 			bold={true}
 			loading={isProviderLoading.includes(PROVIDERS.ANTHROPIC_ID)}
 		/>
@@ -133,7 +158,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
-						loading
+						loading={isModelLoading.includes(model)}
 					/>
 				{/if}
 			{/each}
@@ -144,8 +169,7 @@
 			handleChange={handleProviderChange}
 			label={PROVIDERS.FOREFRONT_TEXT}
 			value={PROVIDERS.FOREFRONT_ID}
-			checked={$selectedProviders.includes(PROVIDERS.FOREFRONT_ID)}
-			color={$selectedProviders.includes(PROVIDERS.FOREFRONT_ID) ? 'black' : ''}
+			checked={selectedProviders.includes(PROVIDERS.FOREFRONT_ID)}
 			bold={true}
 			loading={isProviderLoading.includes(PROVIDERS.FOREFRONT_ID)}
 		/>
@@ -167,7 +191,7 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
-						loading
+						loading={isModelLoading.includes(model)}
 					/>
 				{/if}
 			{/each}
@@ -178,8 +202,7 @@
 			handleChange={handleProviderChange}
 			label={PROVIDERS.ALEPH_ALPHA_TEXT}
 			value={PROVIDERS.ALEPH_ALPHA_ID}
-			checked={$selectedProviders.includes(PROVIDERS.ALEPH_ALPHA_ID)}
-			color={$selectedProviders.includes(PROVIDERS.ALEPH_ALPHA_ID) ? 'black' : ''}
+			checked={selectedProviders.includes(PROVIDERS.ALEPH_ALPHA_ID)}
 			bold={true}
 			loading={isProviderLoading.includes(PROVIDERS.ALEPH_ALPHA_ID)}
 		/>
@@ -201,13 +224,25 @@
 						label={model}
 						value={model}
 						color={`${$legendTracker.get(model) || 'transparent'}`}
-						loading
+						loading={isModelLoading.includes(model)}
 					/>
 				{/if}
 			{/each}
 		</div>
 	</div>
 </section>
+
+{#if fetchError}
+	<ToastNotification
+		class="toast-models-checkboxes"
+		lowContrast
+		timeout={10000}
+		kind="error"
+		title="Network Request Error"
+		subtitle={errorMessage}
+		caption={new Date().toISOString()}
+	/>
+{/if}
 
 <style>
 	.checkbox-container {
@@ -224,5 +259,12 @@
 
 	:global(.checkbox-provider > *) {
 		font-weight: 600;
+	}
+
+	:global(.toast-models-checkboxes) {
+		position: fixed;
+		top: 7dvh;
+		right: 0px;
+		z-index: 9999;
 	}
 </style>

@@ -4,13 +4,18 @@
 	import { updateMetricsWithTimestamps } from '$lib/utils';
 	import { TIME_RANGES } from '$lib/constants';
 	import { InlineLoading } from 'carbon-components-svelte';
+	import { ToastNotification } from 'carbon-components-svelte';
 
-	let selectedTimeRange: string = '12h';
+	let selectedTimeRange: string = TIME_RANGES.TWELVE_HOURS;
 	let loading = false;
+	let fetchError = false;
+	let errorMessage = '';
 
 	const updateMetrics = async () => {
 		try {
 			loading = true;
+			fetchError = false;
+
 			const results = await updateMetricsWithTimestamps(
 				$metricStore.selectedModels,
 				$timestampsStore
@@ -26,12 +31,14 @@
 				metrics: results.metrics
 			});
 			loading = false;
-		} catch (error) {
+		} catch (err) {
 			loading = false;
-			if (error instanceof Error) {
-				window.alert(`An error occurred: ${error.message}`);
+			if (err instanceof Error) {
+				errorMessage = `An error occurred: ${err.message}`;
+				fetchError = true;
 			} else {
-				window.alert(`An unexpected error occurred: ${error}`);
+				errorMessage = `An unexpected error occurred: ${err}`;
+				fetchError = true;
 			}
 		}
 	};
@@ -119,6 +126,18 @@
 	</div>
 </section>
 
+{#if fetchError}
+	<ToastNotification
+		class="toast-date-picker"
+		lowContrast
+		timeout={10000}
+		kind="error"
+		title="Network Request Error"
+		subtitle={errorMessage}
+		caption={new Date().toISOString()}
+	/>
+{/if}
+
 <style>
 	.date-picker-container {
 		display: flex;
@@ -160,5 +179,12 @@
 		place-items: center;
 		background-color: var(--cds-selected-ui);
 		cursor: pointer;
+	}
+
+	:global(.toast-date-picker) {
+		position: fixed;
+		top: 7dvh;
+		right: 0px;
+		z-index: 9999;
 	}
 </style>
