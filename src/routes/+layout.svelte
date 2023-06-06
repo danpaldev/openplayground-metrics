@@ -3,6 +3,12 @@
 	import './styles.css';
 	import { Content } from 'carbon-components-svelte';
 	import Header from '$lib/components/Header.svelte';
+	import { onMount } from 'svelte';
+
+	import { globalTheme } from '$lib/stores/settings';
+	export let data;
+
+	globalTheme.set(data.theme);
 </script>
 
 <svelte:head>
@@ -10,8 +16,8 @@
 	<meta name="description" content="AI Model Metrics Site" />
 </svelte:head>
 
-<div class="app">
-	<Header />
+<div class={$globalTheme === 'white' ? 'app' : 'app-dark'}>
+	<Header preTheme={data.theme} />
 	<Content>
 		<main>
 			<slot />
@@ -24,6 +30,13 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
+	}
+
+	.app-dark {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+		background-color: #262626;
 	}
 
 	main {

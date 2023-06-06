@@ -45,7 +45,7 @@
 		padding-left: 0.7rem;
 		display: block;
 		margin: auto;
-		background: var(--cds-ui-background);
+		background-color: #262626;
 		border-radius: 6px;
 		margin-top: 16px;
 	}
