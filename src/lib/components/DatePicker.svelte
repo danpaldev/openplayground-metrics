@@ -3,11 +3,14 @@
 	import { timestampsStore } from '$lib/stores/timestamps';
 	import { updateMetricsWithTimestamps } from '$lib/utils';
 	import { TIME_RANGES } from '$lib/constants';
+	import { InlineLoading } from 'carbon-components-svelte';
 
 	let selectedTimeRange: string = '12h';
+	let loading = false;
 
 	const updateMetrics = async () => {
 		try {
+			loading = true;
 			const results = await updateMetricsWithTimestamps(
 				$metricStore.selectedModels,
 				$timestampsStore
@@ -22,7 +25,9 @@
 				selectedModels: results.models,
 				metrics: results.metrics
 			});
+			loading = false;
 		} catch (error) {
+			loading = false;
 			if (error instanceof Error) {
 				window.alert(`An error occurred: ${error.message}`);
 			} else {
@@ -68,6 +73,9 @@
 </script>
 
 <section class="date-picker-container">
+	{#if loading}
+		<InlineLoading description="Reloading metrics..." />
+	{/if}
 	<div class="date-picker">
 		<button
 			class="date-option"
