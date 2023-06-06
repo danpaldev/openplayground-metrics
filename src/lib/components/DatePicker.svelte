@@ -73,9 +73,11 @@
 </script>
 
 <section class="date-picker-container">
-	{#if loading}
-		<InlineLoading description="Reloading metrics..." />
-	{/if}
+	<div class="loading-spinner">
+		{#if loading}
+			<InlineLoading description="Reloading metrics..." />
+		{/if}
+	</div>
 	<div class="date-picker">
 		<button
 			class="date-option"
@@ -133,6 +135,10 @@
 		grid-auto-rows: 1fr;
 		width: 40%;
 		border: 1px solid var(--cds-border-strong);
+	}
+
+	.loading-spinner {
+		width: 60%;
 	}
 
 	.date-option {
