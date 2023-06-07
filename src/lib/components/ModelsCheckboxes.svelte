@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PROVIDERS, MODELS_BY_PROVIDER } from '$lib/constants';
+	import { PROVIDERS, MODELS_BY_PROVIDER, PROVIDER_FOR_EACH_MODEL } from '$lib/constants';
 	import { legendTracker } from '$lib/stores/models';
 	import { metricStore } from '$lib/stores/metrics';
 	import { timestampsStore } from '$lib/stores/timestamps';
@@ -49,6 +49,12 @@
 				selectedModels: prevState.selectedModels.filter((model) => model !== target.value),
 				metrics: prevState.metrics.filter((metricObject) => metricObject.model !== target.value)
 			}));
+
+			selectedProviders = [
+				...selectedProviders.filter(
+					(provider) => provider !== PROVIDER_FOR_EACH_MODEL.get(target.value)
+				)
+			];
 		}
 	};
 
@@ -91,6 +97,12 @@
 				),
 				metrics: prevState.metrics.filter((metricObject) => metricObject.provider !== target.value)
 			}));
+
+			selectedProviders = [
+				...selectedProviders.filter(
+					(provider) => provider !== PROVIDER_FOR_EACH_MODEL.get(target.value)
+				)
+			];
 		}
 	};
 </script>

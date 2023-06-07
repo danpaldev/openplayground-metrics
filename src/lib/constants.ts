@@ -41,6 +41,28 @@ export const MODELS_BY_PROVIDER = {
 	]
 };
 
+export const PROVIDER_FOR_EACH_MODEL = new Map([
+	['text-ada-001', PROVIDERS.OPEN_AI_ID],
+	['text-babbage-001', PROVIDERS.OPEN_AI_ID],
+	['text-curie-001', PROVIDERS.OPEN_AI_ID],
+	['text-davinci-003', PROVIDERS.OPEN_AI_ID],
+	['gpt-3.5-turbo', PROVIDERS.OPEN_AI_ID],
+	['gpt-4', PROVIDERS.OPEN_AI_ID],
+	['claude-instant-v1', PROVIDERS.ANTHROPIC_ID],
+	['claude-v1', PROVIDERS.ANTHROPIC_ID],
+	['claude-v1-100k', PROVIDERS.ANTHROPIC_ID],
+	['claude-instant-v1-100k', PROVIDERS.ANTHROPIC_ID],
+	['luminous-supreme-control', PROVIDERS.ALEPH_ALPHA_ID],
+	['luminous-base', PROVIDERS.ALEPH_ALPHA_ID],
+	['luminous-supreme', PROVIDERS.ALEPH_ALPHA_ID],
+	['luminous-extended', PROVIDERS.ALEPH_ALPHA_ID],
+	['pythia-6.9b', PROVIDERS.FOREFRONT_ID],
+	['pythia-12b', PROVIDERS.FOREFRONT_ID],
+	['pythia-20b', PROVIDERS.FOREFRONT_ID],
+	['gpt-j-6b-vanilla', PROVIDERS.FOREFRONT_ID],
+	['gpt-neox-20b-vanilla', PROVIDERS.FOREFRONT_ID]
+]);
+
 export const LEGENDS = {
 	DEFAULT_TABLE_LEGEND:
 		'All metrics in the table represent averages, calculated using metrics from the past 12 hours.'
