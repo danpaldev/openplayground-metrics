@@ -173,6 +173,18 @@
 		outline: inherit;
 	}
 
+	.date-option:disabled {
+		display: grid;
+		place-items: center;
+		background: var(--cds-disabled-01);
+		color: var(--cds-disabled-03);
+		border: none;
+		padding: 0;
+		font: inherit;
+		cursor: pointer;
+		outline: inherit;
+	}
+
 	.date-option:hover,
 	.date-option-selected {
 		display: grid;
