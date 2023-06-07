@@ -27,10 +27,31 @@ export const generateLinearChart = (
 		};
 	});
 
-	//Defining a default extent of time for the X axis, just to make Typescript stop whining
+	//The format we want for the Timestamps
+	const timestampFormat = d3.timeFormat('%Y-%m-%dT%H:%M:%S.%LZ');
+
+	/*
+		A map that will group metrics by Timestamp.
+		It's going to be useful for the Tooltip's content.
+		
+		The Tooltip shows a summary of the Completion Response Time (duration) of 
+		every plotted model.
+	*/
+	const timestampToModelsData = new Map();
+
+	data.forEach((d) => {
+		if (d.timestamp) {
+			const timestampStr = timestampFormat(d.timestamp);
+			if (!timestampToModelsData.has(timestampStr)) {
+				timestampToModelsData.set(timestampStr, []);
+			}
+			timestampToModelsData.get(timestampStr).push(d);
+		}
+	});
+
 	const now = new Date();
 	const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
-	//This is what I really care for, my data
+
 	const extent = d3.extent(data, (d) => d.timestamp);
 	const defaultExtent = [twelveHoursAgo, now];
 	const x = d3
@@ -115,7 +136,7 @@ export const generateLinearChart = (
 			}
 		});
 
-	// Add the Y Axis (Updating existing elements instead of generating them again!!)
+	// Add the Y Axis
 	const yAxisElement = yAxisGroup
 		.selectAll<SVGGElement, undefined>('.y-axis-label')
 		.data([null])
@@ -158,7 +179,7 @@ export const generateLinearChart = (
 
 	/*
 		This is d3.js way for getting nice colors for your lines, 
-		but as you can seeon the .forEach below ("modelColor"),
+		but as you can see on the .forEach below ("modelColor"),
 		we get the color from an already defined map, so we just use 
 		this as a fallback that makes Typescript happy
 	*/
@@ -215,20 +236,48 @@ export const generateLinearChart = (
 				.attr('cx', x(d.timestamp))
 				.attr('cy', y(d.duration))
 				.attr('r', 4)
-				.attr('fill', d.error ? 'red' : modelColor) // Set the circle color based on the error property
-				.style('opacity', d.error ? 1 : 0) // Set the opacity based on the error property
+				.attr('fill', d.error ? 'red' : modelColor)
+				.style('opacity', d.error ? 1 : 0)
+				.attr('data-model', d.model)
 				.on('mouseover', function (event) {
 					const [,] = d3.pointer(event);
 
-					const errorTooltip = `<p>Time (UTC):</p><span>${tooltipValueFormatter(
+					let tooltipContent = `<span>${tooltipValueFormatter(
 						d.timestamp.toString()
-					)}</span><br><br><div>Request Error</div><br>`;
+					)} (UTC)</span><br><br>`;
 
-					const normalTooltip = `<p>Time (UTC):</p></span> <span>${tooltipValueFormatter(
-						d.timestamp.toString()
-					)}</span><br><br><p>Response Time(s):</p><span>${d.duration.toFixed(2)} (s)</span>`;
+					const timestampStr = timestampFormat(d.timestamp);
+					const modelDataAtTimestamp = timestampToModelsData.get(timestampStr);
 
-					const tooltipContent = d.error ? errorTooltip : normalTooltip;
+					/*
+						The following three statements are for moving the hovered model
+						to the first position in the Tooltip’s data.
+					*/
+					const hoveredModelName = d3.select(this).attr('data-model');
+
+					const index = modelDataAtTimestamp.findIndex(
+						(modelData: DataPoint) => modelData.model === hoveredModelName
+					);
+
+					if (index > -1) {
+						const [modelData] = modelDataAtTimestamp.splice(index, 1);
+						modelDataAtTimestamp.unshift(modelData);
+					}
+
+					/*
+						Once our hovered model is first, we generate the Tooltip text with the Data
+						of all the plotted models
+					*/
+					modelDataAtTimestamp.forEach((modelData: DataPoint) => {
+						const colorSquare = `<div style="display: inline-block; width: 12px; height: 12px; background-color: ${legendTracker.get(
+							modelData.model
+						)};"></div>`;
+						const modelName = `<div>${colorSquare} ${modelData.model}</div>`;
+						const responseData = modelData.error
+							? '<p>Request Error</p><br>'
+							: `<p>${modelData.completion_response_time.toFixed(2)} (s)</p><br>`;
+						tooltipContent += `${modelName}${responseData}`;
+					});
 
 					d3.select('#tooltip')
 						.style('left', event.clientX + 10 + 'px')

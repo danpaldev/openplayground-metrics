@@ -73,18 +73,18 @@
 		background: var(--cds-ui-02);
 		color: var(--cds-text-primary);
 		min-height: 1rem;
-		max-height: 7rem;
 		min-width: 1rem;
-		max-width: 10rem;
 		border: 1px solid transparent;
 		border-radius: 6px;
+		padding: 5px;
 		box-shadow: 0 -5px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
 			0 10px 15px -3px #0000000d;
 	}
 
 	:global(#tooltip p) {
 		display: inline-block; /* Allows the border to match the width of the text */
-		border-bottom: 1px solid gray;
+		margin-bottom: 12px;
+		margin-top: 6px;
 		font-weight: 400;
 		font-size: 0.9rem;
 		width: 100%;
