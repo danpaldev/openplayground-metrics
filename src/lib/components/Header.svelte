@@ -35,7 +35,7 @@
 		<HeaderNavItem href="/" text="Metrics   " />
 	</HeaderNav>
 	<HeaderUtilities>
-		<Theme bind:theme persist persistKey="__carbon-theme" />
+		<Theme bind:theme />
 		<HeaderActionLink
 			target="_blank"
 			href="https://discord.com/invite/JAdwnWKMth"
