@@ -268,7 +268,11 @@ export const generateLinearChart = (
 						Once our hovered model is first, we generate the Tooltip text with the Data
 						of all the plotted models
 					*/
-					modelDataAtTimestamp.forEach((modelData: DataPoint) => {
+					const uniqueModelDataAtTimestamp = [
+						...new Set(modelDataAtTimestamp.map((data: DataPoint) => JSON.stringify(data)))
+					].map((data) => JSON.parse(data));
+
+					uniqueModelDataAtTimestamp.forEach((modelData: DataPoint) => {
 						const colorSquare = `<div style="display: inline-block; width: 12px; height: 12px; background-color: ${legendTracker.get(
 							modelData.model
 						)};"></div>`;
