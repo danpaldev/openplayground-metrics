@@ -98,11 +98,7 @@
 				metrics: prevState.metrics.filter((metricObject) => metricObject.provider !== target.value)
 			}));
 
-			selectedProviders = [
-				...selectedProviders.filter(
-					(provider) => provider !== PROVIDER_FOR_EACH_MODEL.get(target.value)
-				)
-			];
+			selectedProviders = [...selectedProviders.filter((provider) => provider !== target.value)];
 		}
 	};
 </script>
