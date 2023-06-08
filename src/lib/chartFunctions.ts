@@ -270,7 +270,7 @@ export const generateLinearChart = (
 					*/
 					const uniqueModelDataAtTimestamp = [
 						...new Set(modelDataAtTimestamp.map((data: DataPoint) => JSON.stringify(data)))
-					].map((data) => JSON.parse(data));
+					].map((data: unknown) => JSON.parse(data as string));
 
 					uniqueModelDataAtTimestamp.forEach((modelData: DataPoint) => {
 						const colorSquare = `<div style="display: inline-block; width: 12px; height: 12px; background-color: ${legendTracker.get(
