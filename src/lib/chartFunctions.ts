@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { tooltipValueFormatter, type Metric } from '$lib/utils.js';
+import { tooltipValueFormatter, getRoundedTimestamp, type Metric } from '$lib/utils.js';
 
 interface DataPoint extends Metric {
 	timestamp: Date;
@@ -41,7 +41,8 @@ export const generateLinearChart = (
 
 	data.forEach((d) => {
 		if (d.timestamp) {
-			const timestampStr = timestampFormat(d.timestamp);
+			const timestampStr = getRoundedTimestamp(timestampFormat(d.timestamp));
+
 			if (!timestampToModelsData.has(timestampStr)) {
 				timestampToModelsData.set(timestampStr, []);
 			}
@@ -152,6 +153,102 @@ export const generateLinearChart = (
 		.attr('stroke-opacity', 0.2)
 		.attr('x2', width)
 		.attr('stroke', 'currentColor');
+
+	const verticalLine = plottedDataGroup
+		.append('line')
+		.attr('class', 'vertical-line')
+		.attr('y1', margin.top)
+		.attr('y2', height - margin.bottom)
+		.style('stroke', '#ccc')
+		.style('stroke-width', 1)
+		.style('stroke-dasharray', '5, 5')
+		.style('opacity', 0);
+
+	const horizontalLine = plottedDataGroup
+		.append('line')
+		.attr('class', 'horizontal-line')
+		.attr('x1', margin.left)
+		.attr('x2', width - margin.right)
+		.style('stroke', '#ccc')
+		.style('stroke-width', 1)
+		.style('stroke-dasharray', '5, 5')
+		.style('opacity', 0);
+
+	//An be an invisible rect that we're using for detecting whenever the cursor enters the grid
+	const mouseArea = chart
+		.append('rect')
+		.attr('x', margin.left)
+		.attr('y', margin.top)
+		.attr('width', width - margin.left - margin.right)
+		.attr('height', height - margin.top - margin.bottom)
+		.style('opacity', 0);
+
+	mouseArea.on('mouseover', () => {
+		d3.select('#tooltip').style('visibility', 'visible');
+		verticalLine.style('opacity', 1);
+		horizontalLine.style('opacity', 1);
+		mouseArea.style('cursor', 'crosshair');
+	});
+
+	mouseArea.on('mouseout', () => {
+		d3.select('#tooltip').style('visibility', 'hidden');
+		verticalLine.style('opacity', 0);
+		horizontalLine.style('opacity', 0);
+		mouseArea.style('cursor', 'default'); // Change cursor back to default when leaving grid
+	});
+
+	mouseArea.on('mousemove', (event) => {
+		const [xPos, yPos] = d3.pointer(event);
+		const xValue = x.invert(xPos);
+		const timestampStr = timestampFormat(xValue);
+
+		// console.log(timestampStr);
+
+		let tooltipContent = `<span>${tooltipValueFormatter(
+			getRoundedTimestamp(timestampStr)
+		)} (UTC)</span><br><br>`;
+
+		const modelDataAtTimestamp = timestampToModelsData.get(getRoundedTimestamp(timestampStr));
+
+		//Used to prevent duplicated labels glitch
+		const uniqueModelDataAtTimestamp = [
+			...new Set(modelDataAtTimestamp.map((data: DataPoint) => JSON.stringify(data)))
+		].map((data: unknown) => JSON.parse(data as string));
+
+		if (uniqueModelDataAtTimestamp) {
+			// if (modelDataAtTimestamp) {
+			// modelDataAtTimestamp.forEach((modelData: DataPoint) => {
+			uniqueModelDataAtTimestamp.forEach((modelData: DataPoint) => {
+				const colorSquare = `<div style="display: inline-block; width: 12px; height: 12px; background-color: ${legendTracker.get(
+					modelData.model
+				)};"></div>`;
+				const modelName = `<div>${colorSquare} ${modelData.model}</div>`;
+				const responseData = modelData.error
+					? '<p>Request Error</p><br>'
+					: `<p>${modelData.completion_response_time.toFixed(2)} s</p><br>`;
+
+				tooltipContent += modelName + responseData;
+			});
+		} else {
+			tooltipContent += '<p>No data for this timestamp</p>';
+		}
+
+		// Update the tooltip HTML
+		d3.select('#tooltip').html(tooltipContent);
+
+		// Determine the position of the tooltip based on the xPos value
+		const tooltipXAxis = xPos > width - 200 ? event.clientX - 220 : event.clientX + 60;
+		const tooltipYAxis = event.clientY + 20;
+
+		// Update the tooltip position to follow the cursor
+		d3.select('#tooltip')
+			.style('left', tooltipXAxis + 'px')
+			.style('top', tooltipYAxis + 'px');
+
+		// Update the vertical line's X position
+		verticalLine.attr('x1', xPos).attr('x2', xPos);
+		horizontalLine.attr('y1', yPos).attr('y2', yPos);
+	});
 
 	// Add axis labels (Updating existing labels instead of generating them again!!)
 	chart

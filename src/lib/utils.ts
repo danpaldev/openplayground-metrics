@@ -2,10 +2,15 @@ import { MODELS_BY_PROVIDER, COLOR_PALETTE } from '$lib/constants';
 import { PUBLIC_HOST_URL } from '$env/static/public';
 
 export const tooltipValueFormatter = (value: string): string => {
-	const hourRegex = /\b\d{1,2}:\d{2}:\d{2}\b/;
-	const hourString = String(value).match(hourRegex);
+	const parts = value.split('T');
 
-	if (hourString) return String(hourString);
+	const timeParts = parts[1].split(':');
+
+	const time = timeParts[0] + ':' + timeParts[1];
+
+	console.log(time);
+
+	if (time) return time;
 	return value;
 };
 
@@ -210,4 +215,32 @@ export const mapColorToModels = (): Map<string, string> => {
 	]);
 	const map: Map<string, string> = new Map(result);
 	return map;
+};
+
+//It will round the Timestamp to have a minute that is multiple of 5
+//In this way, it will match the nearest timestamp in out plot
+//(Where our data is from every 5 minutes and therefore this will always work)
+export const getRoundedTimestamp = (timestampStr: string) => {
+	const timestamp = new Date(timestampStr);
+
+	let minutes = timestamp.getUTCMinutes();
+	const remainder = minutes % 5;
+
+	if (remainder >= 3) {
+		// if closer to the next multiple of 5
+		minutes += 5 - remainder;
+	} else {
+		// if closer to the previous multiple of 5
+		minutes -= remainder;
+	}
+
+	timestamp.setUTCMinutes(minutes);
+
+	const year = timestamp.getUTCFullYear();
+	const month = (timestamp.getUTCMonth() + 1).toString().padStart(2, '0');
+	const day = timestamp.getUTCDate().toString().padStart(2, '0');
+	const hour = timestamp.getUTCHours().toString().padStart(2, '0');
+	const minute = timestamp.getUTCMinutes().toString().padStart(2, '0');
+
+	return `${year}-${month}-${day}T${hour}:${minute}`;
 };

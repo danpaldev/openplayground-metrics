@@ -17,7 +17,7 @@
 </svelte:head>
 
 <div class={$globalTheme === 'white' ? 'app' : 'app-dark'}>
-	<Header preTheme={data.theme} />
+	<Header />
 	<Content>
 		<main>
 			<slot />
