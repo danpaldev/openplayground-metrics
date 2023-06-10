@@ -159,8 +159,8 @@ export const generateLinearChart = (
 		.attr('class', 'vertical-line')
 		.attr('y1', margin.top)
 		.attr('y2', height - margin.bottom)
-		.style('stroke', '#ccc')
-		.style('stroke-width', 1)
+		.style('stroke', 'var(--cds-text-primary)')
+		.style('stroke-width', 0.8)
 		.style('stroke-dasharray', '5, 5')
 		.style('opacity', 0);
 
@@ -169,8 +169,8 @@ export const generateLinearChart = (
 		.attr('class', 'horizontal-line')
 		.attr('x1', margin.left)
 		.attr('x2', width - margin.right)
-		.style('stroke', '#ccc')
-		.style('stroke-width', 1)
+		.style('stroke', 'var(--cds-text-primary)')
+		.style('stroke-width', 0.8)
 		.style('stroke-dasharray', '5, 5')
 		.style('opacity', 0);
 
@@ -194,15 +194,18 @@ export const generateLinearChart = (
 		d3.select('#tooltip').style('visibility', 'hidden');
 		verticalLine.style('opacity', 0);
 		horizontalLine.style('opacity', 0);
-		mouseArea.style('cursor', 'default'); // Change cursor back to default when leaving grid
+		mouseArea.style('cursor', 'default');
+		plottedDataGroup.selectAll('.cursor-circle').remove();
 	});
 
 	mouseArea.on('mousemove', (event) => {
 		const [xPos, yPos] = d3.pointer(event);
-		const xValue = x.invert(xPos);
-		const timestampStr = timestampFormat(xValue);
 
-		// console.log(timestampStr);
+		// Find the nearest x value in the data
+		const xValueTimestamp = x.invert(xPos);
+		const xValueRoundedTimestamp = new Date(Math.round(xValueTimestamp.getTime() / 1000) * 1000);
+
+		const timestampStr = timestampFormat(xValueRoundedTimestamp);
 
 		let tooltipContent = `<span>${tooltipValueFormatter(
 			getRoundedTimestamp(timestampStr)
@@ -210,14 +213,12 @@ export const generateLinearChart = (
 
 		const modelDataAtTimestamp = timestampToModelsData.get(getRoundedTimestamp(timestampStr));
 
-		//Used to prevent duplicated labels glitch
+		// Used to prevent duplicated labels glitch
 		const uniqueModelDataAtTimestamp = [
 			...new Set(modelDataAtTimestamp.map((data: DataPoint) => JSON.stringify(data)))
 		].map((data: unknown) => JSON.parse(data as string));
 
 		if (uniqueModelDataAtTimestamp) {
-			// if (modelDataAtTimestamp) {
-			// modelDataAtTimestamp.forEach((modelData: DataPoint) => {
 			uniqueModelDataAtTimestamp.forEach((modelData: DataPoint) => {
 				const colorSquare = `<div style="display: inline-block; width: 12px; height: 12px; background-color: ${legendTracker.get(
 					modelData.model
@@ -233,11 +234,10 @@ export const generateLinearChart = (
 			tooltipContent += '<p>No data for this timestamp</p>';
 		}
 
-		// Update the tooltip HTML
 		d3.select('#tooltip').html(tooltipContent);
 
-		// Determine the position of the tooltip based on the xPos value
-		const tooltipXAxis = xPos > width - 200 ? event.clientX - 220 : event.clientX + 60;
+		// Determine the position of the tooltip based on the cursor position (xpos, ypos values)
+		const tooltipXAxis = xPos > width - 200 ? event.clientX - 240 : event.clientX + 60;
 		const tooltipYAxis = event.clientY + 20;
 
 		// Update the tooltip position to follow the cursor
@@ -248,6 +248,27 @@ export const generateLinearChart = (
 		// Update the vertical line's X position
 		verticalLine.attr('x1', xPos).attr('x2', xPos);
 		horizontalLine.attr('y1', yPos).attr('y2', yPos);
+
+		// Clean previously rendered circles
+		plottedDataGroup.selectAll('.cursor-circle').remove();
+
+		// Check if the cursor/vertical line are on an existing X data point
+		if (modelDataAtTimestamp) {
+			// Iterate over the data for the nearest x value
+			modelDataAtTimestamp.forEach((modelData: DataPoint) => {
+				if (modelData.completion_response_time === 0) return;
+				// Add a circle for each line at the nearest x value
+				plottedDataGroup
+					.append('circle')
+					.attr('class', 'cursor-circle')
+					.attr('cx', x(modelData.timestamp))
+					.attr('cy', y(modelData.completion_response_time))
+					.attr('r', 4)
+					.attr('fill', '#fff')
+					.attr('stroke', legendTracker.get(modelData.model) || 'black')
+					.attr('stroke-width', 2);
+			});
+		}
 	});
 
 	// Add axis labels (Updating existing labels instead of generating them again!!)
