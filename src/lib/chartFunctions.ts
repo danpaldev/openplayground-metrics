@@ -164,16 +164,6 @@ export const generateLinearChart = (
 		.style('stroke-dasharray', '5, 5')
 		.style('opacity', 0);
 
-	const horizontalLine = plottedDataGroup
-		.append('line')
-		.attr('class', 'horizontal-line')
-		.attr('x1', margin.left)
-		.attr('x2', width - margin.right)
-		.style('stroke', 'var(--cds-text-primary)')
-		.style('stroke-width', 0.8)
-		.style('stroke-dasharray', '5, 5')
-		.style('opacity', 0);
-
 	//An be an invisible rect that we're using for detecting whenever the cursor enters the grid
 	const mouseArea = chart
 		.append('rect')
@@ -186,20 +176,18 @@ export const generateLinearChart = (
 	mouseArea.on('mouseover', () => {
 		d3.select('#tooltip').style('visibility', 'visible');
 		verticalLine.style('opacity', 1);
-		horizontalLine.style('opacity', 1);
 		mouseArea.style('cursor', 'crosshair');
 	});
 
 	mouseArea.on('mouseout', () => {
 		d3.select('#tooltip').style('visibility', 'hidden');
 		verticalLine.style('opacity', 0);
-		horizontalLine.style('opacity', 0);
 		mouseArea.style('cursor', 'default');
 		plottedDataGroup.selectAll('.cursor-circle').remove();
 	});
 
 	mouseArea.on('mousemove', (event) => {
-		const [xPos, yPos] = d3.pointer(event);
+		const [xPos] = d3.pointer(event);
 
 		// Find the nearest x value in the data
 		const xValueTimestamp = x.invert(xPos);
@@ -247,7 +235,6 @@ export const generateLinearChart = (
 
 		// Update the vertical line's X position
 		verticalLine.attr('x1', xPos).attr('x2', xPos);
-		horizontalLine.attr('y1', yPos).attr('y2', yPos);
 
 		// Clean previously rendered circles
 		plottedDataGroup.selectAll('.cursor-circle').remove();

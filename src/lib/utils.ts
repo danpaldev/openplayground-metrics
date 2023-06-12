@@ -8,8 +8,6 @@ export const tooltipValueFormatter = (value: string): string => {
 
 	const time = timeParts[0] + ':' + timeParts[1];
 
-	console.log(time);
-
 	if (time) return time;
 	return value;
 };
