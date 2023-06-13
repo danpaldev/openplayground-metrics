@@ -17,6 +17,7 @@ export const MODELS_BY_PROVIDER = {
 		'text-curie-001',
 		'text-davinci-003',
 		'gpt-3.5-turbo',
+		'gpt-3.5-turbo-16k',
 		'gpt-4'
 		// 'text-davinci-002'
 	],
@@ -47,6 +48,7 @@ export const PROVIDER_FOR_EACH_MODEL = new Map([
 	['text-curie-001', PROVIDERS.OPEN_AI_ID],
 	['text-davinci-003', PROVIDERS.OPEN_AI_ID],
 	['gpt-3.5-turbo', PROVIDERS.OPEN_AI_ID],
+	['gpt-3.5-turbo-16k', PROVIDERS.OPEN_AI_ID],
 	['gpt-4', PROVIDERS.OPEN_AI_ID],
 	['claude-instant-v1', PROVIDERS.ANTHROPIC_ID],
 	['claude-v1', PROVIDERS.ANTHROPIC_ID],
